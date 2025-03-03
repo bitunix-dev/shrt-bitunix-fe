@@ -1,4 +1,4 @@
-import { Link } from "lucide-react"
+import { Link, Scissors, Tag } from "lucide-react";
 
 import {
   Sidebar,
@@ -9,7 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // Menu items.
 const items = [
@@ -18,7 +18,17 @@ const items = [
     url: "#",
     icon: Link,
   },
-]
+  {
+    title: "Shorten Link",
+    url: "#shorten",
+    icon: Scissors,
+  },
+  {
+    title: "UTM Builder",
+    url: "#utm-builder",
+    icon: Tag,
+  },
+];
 
 export function AppSidebar() {
   return (
@@ -31,8 +41,11 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
+                    <a
+                      href={item.url}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
@@ -43,5 +56,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
