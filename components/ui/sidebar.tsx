@@ -697,6 +697,24 @@ function SidebarMenuSubButton({
     />
   );
 }
+function SidebarInformation({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn(
+        "text-xs text-muted-foreground px-4 pb-4 leading-relaxed",
+        className
+      )}
+      {...props}
+    >
+      Bitunix-shorten simplifies your marketing campaigns with URL shortening &
+      automatic UTM generation. Track clicks, create QR codes, and optimize
+      conversions effortlessly.
+    </p>
+  );
+}
 
 export {
   Sidebar,
@@ -723,4 +741,5 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
+  SidebarInformation,
 };

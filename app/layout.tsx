@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bitunix-shorten | URL Shortener dengan UTM Generator Otomatis",
+  title: "Bitunix-shorten | URL Shortener with Automatic UTM Generator",
   description:
-    "Bitunix-shorten menyederhanakan kampanye marketing Anda dengan URL shortener & generator UTM otomatis. Lacak klik, buat QR code, dan optimalkan konversi dengan mudah.",
+    "Bitunix-shorten simplifies your marketing campaigns with URL shortening & automatic UTM generation. Track clicks, create QR codes, and optimize conversions effortlessly.",
   keywords: [
     "URL shortener",
     "UTM generator",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "short links",
     "analytics tracking",
     "campaign tracking",
-    "traffic source tracking",
+    "traffic source monitoring",
   ],
   robots: {
     index: true,
@@ -46,11 +46,11 @@ export const metadata: Metadata = {
   publisher: "Bitunix-shorten",
   openGraph: {
     type: "website",
-    locale: "id_ID",
+    locale: "en_US",
     url: "https://Bitunix-shorten.com",
-    title: "Bitunix-shorten - Pemendekan URL dengan UTM Generator",
+    title: "Bitunix-shorten - URL Shortening with UTM Generator",
     description:
-      "Optimalkan kampanye marketing Anda dengan Bitunix-shorten. Pemendekan URL, generator UTM otomatis, pelacakan klik, dan QR code untuk meningkatkan konversi.",
+      "Optimize your marketing campaigns with Bitunix-shorten. URL shortening, automatic UTM generation, click tracking, and QR codes to boost conversions.",
     siteName: "Bitunix-shorten",
     images: [
       {
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bitunix-shorten - URL Shortener dengan UTM Generator",
+    title: "Bitunix-shorten - URL Shortener with UTM Generator",
     description:
-      "Optimalkan kampanye marketing Anda dengan URL shortener & UTM generator otomatis. Lacak klik, buat QR code, dan tingkatkan konversi.",
+      "Optimize your marketing campaigns with URL shortening & automatic UTM generation. Track clicks, create QR codes, and boost conversions.",
     images: ["https://Bitunix-shorten.com/twitter-image.jpg"],
     creator: "@Bitunix-shorten",
     site: "@Bitunix-shorten",
@@ -89,8 +89,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://Bitunix-shorten.com",
     languages: {
-      "id-ID": "https://Bitunix-shorten.com/id",
       "en-US": "https://Bitunix-shorten.com/en",
+      "id-ID": "https://Bitunix-shorten.com/id",
     },
   },
   viewport: {
@@ -103,7 +103,10 @@ export const metadata: Metadata = {
     yandex: "yandex-verification-code",
     yahoo: "yahoo-verification-code",
     other: {
-      me: ["my-email@example.com", "https://example.com/me"],
+      me: [
+        "contact@Bitunix-shorten.com",
+        "https://Bitunix-shorten.com/contact",
+      ],
     },
   },
   category: "Technology",

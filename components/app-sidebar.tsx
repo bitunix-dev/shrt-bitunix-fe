@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarInformation,
 } from "@/components/ui/sidebar";
 
 // Menu items.
@@ -54,6 +55,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarInformation />
       </SidebarContent>
     </Sidebar>
   );
