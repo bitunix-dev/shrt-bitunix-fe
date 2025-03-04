@@ -18,9 +18,6 @@ import {
   QrCode,
   CopyCheck,
   Trash2,
-  Archive,
-  FolderUp,
-  Files,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -42,27 +39,21 @@ import {
 import { Header } from "./Header";
 
 interface DataTableProps {
-  BtnCreate: React.ReactNode
-  data: any
+  BtnCreate: React.ReactNode;
+  data: any;
 }
 
 // API URL dari .env.local
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const DataTable: React.FC<DataTableProps> = ({
-  BtnCreate,
-  data
-}) => {
+export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   // Kolom tabel
   const columns: ColumnDef<(typeof data)[0]>[] = [
     {
       accessorKey: "short_link",
       header: () => null,
       cell: ({ row }) => (
-        <div className="flex items-center gap-3 py-3">
-          {/* Status Icon */}
-          <div className="w-4 h-4 rounded-full bg-green-400"></div>
-
+        <div className="py-3">
           {/* Short Link */}
           <div className="flex items-center gap-2">
             <span className="text-black font-medium">
@@ -77,22 +68,18 @@ export const DataTable: React.FC<DataTableProps> = ({
               <Copy className="w-4 h-4" />
             </button>
           </div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "destination_url",
-      header: () => null,
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2 text-gray-500 text-sm">
-          <span className="truncate">{row.getValue("destination_url")}</span>
-          <a
-            href={row.getValue("destination_url")}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink className="w-4 h-4 text-gray-500 hover:text-black" />
-          </a>
+
+          {/* Mixed URL (diletakkan di bawah dengan ukuran kecil) */}
+          <div className="flex items-center gap-2 text-gray-500 text-xs mt-1">
+            <span className="truncate">{row.getValue("mixed_url")}</span>
+            <a
+              href={row.getValue("mixed_url")}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-gray-500 hover:text-black" />
+            </a>
+          </div>
         </div>
       ),
     },
@@ -139,16 +126,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               <QrCode className="w-4 h-4 mr-2" /> QR Code
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Files className="w-4 h-4 mr-2" /> Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuItem>
               <CopyCheck className="w-4 h-4 mr-2" /> Copy Link ID
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Archive className="w-4 h-4 mr-2" /> Archive
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <FolderUp className="w-4 h-4 mr-2" /> Transfer
             </DropdownMenuItem>
             <DropdownMenuItem className="text-red-600">
               <Trash2 className="w-4 h-4 mr-2" /> Delete
@@ -172,9 +150,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     <div className="w-full">
       {/* HEADER */}
 
-      <Header
-        BtnCreate={BtnCreate}
-      />
+      <Header BtnCreate={BtnCreate} />
 
       {/* TABLE */}
       {data && (
@@ -189,9 +165,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -228,4 +204,4 @@ export const DataTable: React.FC<DataTableProps> = ({
       )}
     </div>
   );
-}
+};

@@ -41,9 +41,9 @@
 }
 
 .Description {
-	margin: 10px 0 20px;
+	margin: 0 0 20px;
 	color: var(--mauve-11);
-	font-size: 15px;
+	font-size: 10px;
 	line-height: 1.5;
 }
 
