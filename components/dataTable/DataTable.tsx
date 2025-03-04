@@ -21,13 +21,9 @@ import {
   Archive,
   FolderUp,
   Files,
-  ChevronDown,
-  Search,
 } from "lucide-react";
 
-import CreateLinkModal from "../ModalDialog/Modal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,27 +39,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { Header } from "./Header";
+
+interface DataTableProps {
+  BtnCreate: React.ReactNode
+  data: any
+}
+
 // API URL dari .env.local
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export function DataTable() {
-  const [data, setData] = React.useState([]);
-
-  // Fetch data dari API saat komponen dimount
-  React.useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${API_URL}/api/urls`);
-        const result = await response.json();
-        setData(result.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
+export const DataTable: React.FC<DataTableProps> = ({
+  BtnCreate,
+  data
+}) => {
   // Kolom tabel
   const columns: ColumnDef<(typeof data)[0]>[] = [
     {
@@ -169,7 +158,6 @@ export function DataTable() {
       ),
     },
   ];
-
   // Inisialisasi tabel
   const table = useReactTable({
     data,
@@ -183,91 +171,61 @@ export function DataTable() {
   return (
     <div className="w-full">
       {/* HEADER */}
-      <div className="flex items-center justify-between py-4">
-        <div className="flex gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Filter <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>Status: Active</DropdownMenuItem>
-              <DropdownMenuItem>Status: Expired</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Display <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>Show all columns</DropdownMenuItem>
-              <DropdownMenuItem>Customize columns</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 text-gray-500 w-4 h-4" />
-            <Input placeholder="Search..." className="pl-8 max-w-sm" />
-          </div>
-
-          <CreateLinkModal />
-        </div>
-      </div>
+      <Header
+        BtnCreate={BtnCreate}
+      />
 
       {/* TABLE */}
-      <div className="w-full">
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+      {data && (
+        <div className="w-full">
+          <div className="rounded-md border">
+            <Table className="border-none">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} className="border rounded-lg">
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id} className="border rounded-lg">
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

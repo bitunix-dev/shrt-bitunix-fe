@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import "./globals.css";
+import { ClientLayouts } from "./clientLayouts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -113,6 +112,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://Bitunix-shorten.com"),
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -123,13 +123,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="w-full">
-            <SidebarTrigger />
-            <div className="p-3 w-6xl mx-auto">{children}</div>
-          </main>
-        </SidebarProvider>
+        <ClientLayouts>
+          {children}
+        </ClientLayouts>
       </body>
     </html>
   );
