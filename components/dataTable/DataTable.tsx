@@ -2,15 +2,6 @@
 
 import * as React from "react";
 import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  ColumnDef,
-} from "@tanstack/react-table";
-import {
   Copy,
   ExternalLink,
   MoreHorizontal,
@@ -19,7 +10,6 @@ import {
   CopyCheck,
   Trash2,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,15 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Header } from "./Header";
 
 interface DataTableProps {
@@ -43,164 +25,105 @@ interface DataTableProps {
   data: any;
 }
 
-// API URL dari .env.local
-// const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
-  // Kolom tabel
-  const columns: ColumnDef<(typeof data)[0]>[] = [
-    {
-      accessorKey: "short_link",
-      header: () => null,
-      cell: ({ row }) => (
-        <div className="py-3">
-          {/* Short Link */}
-          <div className="flex items-center gap-2">
-            <span className="text-black font-medium">
-              {row.getValue("short_link")}
-            </span>
-            <button
-              className="text-gray-500 hover:text-black"
-              onClick={() =>
-                navigator.clipboard.writeText(row.getValue("short_link"))
-              }
-            >
-              <Copy className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Mixed URL (diletakkan di bawah dengan ukuran kecil) */}
-          <div className="flex items-center gap-2 text-gray-500 text-xs mt-1">
-            <span className="truncate">{row.getValue("mixed_url")}</span>
-            <a
-              href={row.getValue("mixed_url")}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-gray-500 hover:text-black" />
-            </a>
-          </div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "clicks",
-      header: () => null,
-      cell: ({ row }) => (
-        <Button
-          variant="ghost"
-          className="text-sm text-gray-600 px-3 py-1 border border-gray-300 rounded-md"
-        >
-          ✨ {row.getValue("clicks")} clicks
-        </Button>
-      ),
-    },
-    {
-      accessorKey: "tags",
-      header: () => null,
-      cell: ({ row }) => (
-        <div className="flex gap-1 text-gray-500 text-xs">
-          {((row.getValue("tags") as any[]) || []).map((tag) => (
-            <span key={tag.id} className="px-2 py-1 bg-gray-200 rounded-md">
-              {tag.name}
-            </span>
-          ))}
-        </div>
-      ),
-    },
-    {
-      id: "actions",
-      header: () => null,
-      cell: () => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Pencil className="w-4 h-4 mr-2" /> Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <QrCode className="w-4 h-4 mr-2" /> QR Code
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CopyCheck className="w-4 h-4 mr-2" /> Copy Link ID
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600">
-              <Trash2 className="w-4 h-4 mr-2" /> Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
-  ];
-  // Inisialisasi tabel
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+  const [selectedItem, setSelectedItem] = React.useState<any>(null);
 
   return (
     <div className="w-full">
       {/* HEADER */}
-
       <Header BtnCreate={BtnCreate} />
 
-      {/* TABLE */}
-      {data && (
-        <div className="w-full">
-          <div className="rounded-md border">
-            <Table className="border-none">
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border rounded-lg">
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
+      {/* LIST VIEW */}
+      <div className="mt-4 space-y-2">
+        {data && data.length ? (
+          data.map((item: any, index: number) => (
+            <div
+              key={index}
+              className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border"
+            >
+              <div className="flex items-center gap-4">
+                {/* Status Indicator */}
+                <div className="w-6 h-6 rounded-full bg-green-400"></div>
+                
+                {/* Link Info */}
+                <div>
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    {item.short_link}
+                    <button
+                      className="text-gray-500 hover:text-black"
+                      onClick={() => navigator.clipboard.writeText(item.short_link)}
                     >
-                      No results.
-                    </TableCell>
-                  </TableRow>
+                      <Copy className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="text-gray-500 text-sm">
+                    <a
+                      href={item.destination_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1"
+                    >
+                      ↳ {item.destination_url}
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <span className="text-xs text-gray-400"> • {item.time_ago}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Tags & Clicks */}
+              <div className="flex items-center gap-2">
+                {item.tags?.length > 0 && (
+                  <span className="px-2 py-1 text-xs font-medium text-purple-600 bg-purple-100 rounded-md">
+                    {item.tags[0].name}
+                  </span>
                 )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+                <span className="text-sm text-gray-600 px-3 py-1 border border-gray-300 rounded-md">
+                  ✨ {item.clicks} clicks
+                </span>
+                
+                {/* Actions */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <MoreHorizontal />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setSelectedItem(item)}>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>QR Code</DropdownMenuItem>
+                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                    <DropdownMenuItem>Copy Link ID</DropdownMenuItem>
+                    <DropdownMenuItem>Archive</DropdownMenuItem>
+                    <DropdownMenuItem>Transfer</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">No results.</p>
+        )}
+      </div>
+
+      {/* Modal for Editing */}
+      {selectedItem && (
+        <Dialog open={Boolean(selectedItem)} onOpenChange={() => setSelectedItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Link</DialogTitle>
+              <DialogDescription>
+                Modify the short link details.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="p-4">
+              <p className="text-lg font-semibold">{selectedItem.short_link}</p>
+              <p className="text-sm text-gray-500">Destination: {selectedItem.destination_url}</p>
+            </div>
+            <Button onClick={() => setSelectedItem(null)}>Close</Button>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

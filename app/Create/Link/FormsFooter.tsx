@@ -1,8 +1,27 @@
 import { Dialog } from "radix-ui"
 import { Button } from "@/components/ui/button"
 import { Creata } from "../UTM/Create"
+import { SubmitCreate } from "./Submit"
 
-export const FormFooter = () => {
+interface FormFooterProps {
+    dataBody: any
+}
+
+export const FormFooter:React.FC<FormFooterProps> = ({
+    dataBody
+}) => {
+
+    const handleClick = async () => {
+        try {
+            const response = await SubmitCreate({
+                dataBody
+            })
+            console.log(response);
+        } catch (error) {
+            
+        }
+    }
+
     return (
         <>
             <hr className="mt-5"/>
