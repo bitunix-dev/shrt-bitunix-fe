@@ -3,32 +3,27 @@
 import Modal from "@/components/ModalDialog/Modal";
 import { Forms } from "./Forms";
 import { BtnCreate } from "./BtnCreate";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FormFooter } from "./FormsFooter";
 import { useGetTags } from "@/hooks/useGetTags";
 
-export const Create = () => {
-    const [open, setOpen] = useState(false);
-    const [destinationUrl, setDestinationUel] = useState<string>('')
-    const [tags, setTags] = useState<[]>([])
-    const [source, setSource] = useState<string>('')
-    const [medium, setMedium] = useState<string>('')
-    const [campaign, setCampaign] = useState<string>('')
-    const [term, setTerm] = useState<string>('')
-    const [content, setContent] = useState<string>('')
-    const [referral, setReferral] = useState<string>('')
+interface CreateProps {
+    refetch: () => void; // ✅ Tambahkan prop untuk refetch
+}
 
-    const { data, isLoading, error } = useGetTags()
+export const Create: React.FC<CreateProps> = ({
+    refetch
+}) => {
+    const [open, setOpen] = useState(false);
+    const [destinationUrl, setDestinationUrl] = useState<string>('')
+    const [tags, setTags] = useState<[]>([])
+    const [shortLink, setShortLink] = useState<string>(""); // ✅ State untuk menyimpan short link
+
+    const { data } = useGetTags()
 
     const dataBody = {
-        destination_url: destinationUrl,
-        tags: tags,
-        source: source,
-        medium: medium,
-        campaign: campaign,
-        term: term,
-        content: content,
-        referral: referral       
+        "destination_url": destinationUrl,
+        "tags": tags,
     }
 
     return (
@@ -36,6 +31,12 @@ export const Create = () => {
             <Modal
                 ModalBodyComponents={<Forms
                     dataTags={data?.data}
+                    setTags={setTags}
+                    tags={tags}
+                    setDestinationUrl={setDestinationUrl}
+                    setShortLink={setShortLink}
+                    shortLink={shortLink}
+                    destinationUrl={destinationUrl}
                 />}
                 BtnCreate={<BtnCreate setOpen={setOpen} />}
                 setOpen={setOpen}
@@ -46,6 +47,10 @@ export const Create = () => {
                 ModalDescription="Create a new Link"
                 ModalFooter={<FormFooter
                     dataBody={dataBody}
+                    refetch={refetch}
+                    setOpen={setOpen}
+                    setDestinasionUrl={setDestinationUrl}
+                    destinasiUrl={destinationUrl}
                 />}
             />
         </>

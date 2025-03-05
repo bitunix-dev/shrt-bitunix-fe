@@ -6,12 +6,11 @@ import { useGetUrls } from "@/hooks/useGetUrls"
 
 export const Get = () => {
 
-    const {data, isLoading, error} = useGetUrls()
-
+    const {data, refetch} = useGetUrls()
 
     return (
         <DataTable
-            BtnCreate={<Create />}
+            BtnCreate={<Create refetch={refetch}/>}
             data={data?.data}
         />
     )

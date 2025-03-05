@@ -3,12 +3,6 @@ import { clientApiRequest } from "@/services/clientApiRequest"
 interface DataBody {
     destination_url: string;
     tags: string[];
-    source: string;
-    medium: string;
-    campaign: string;
-    term: string;
-    content: string;
-    referral: string;
   }
   
 
@@ -32,6 +26,7 @@ export const SubmitCreate = async ({dataBody}: SubmitProps): Promise<ApiResponse
 
         return response
     } catch (error) {
+        console.log(error)
         throw new Error("Failed to submit transaction");
     }
 }

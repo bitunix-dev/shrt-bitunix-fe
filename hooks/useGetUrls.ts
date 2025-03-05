@@ -14,6 +14,7 @@ const fetchUrls = async (): Promise<ApiResponse> => {
   }
 };
 
+// ✅ Hook React Query untuk mengambil URL + Link Preview
 export const useGetUrls = () => {
   return useQuery<ApiResponse>({
     queryKey: ["urls"], // Key unik untuk caching

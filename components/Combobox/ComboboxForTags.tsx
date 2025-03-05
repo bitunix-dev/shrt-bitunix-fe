@@ -23,23 +23,43 @@ interface Tag {
 
 interface ComboBoxForTagsProps {
   dataTags: Tag[]; // ✅ Gunakan array dengan tipe `Tag`
+  selectedTags: string[]; // ✅ Sekarang hanya menyimpan nama tag
+  setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>; // ✅ Setter untuk array string
 }
 
-export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({ dataTags }) => {
+export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({
+  dataTags,
+  selectedTags,
+  setSelectedTags,
+}) => {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [selectedTag, setSelectedTag] = React.useState<Tag | null>(null);
 
+  // ✅ Menampilkan tag yang sudah dipilih di dalam button
+  const renderSelectedTags = () => {
+    if (selectedTags.length === 0) return <><Tags className="w-4" /> Tags</>;
+    return selectedTags.map((tag) => (
+      <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-sm mr-1">
+        {tag}
+      </span>
+    ));
+  };
+  
   if (isDesktop) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full justify-start">
-            {selectedTag ? <>{selectedTag.name}</> : <><Tags /> Tags</>}
-          </Button>
+          <div className="w-full flex border text-sm py-1.5 px-2 rounded-md items-start flex-wrap gap-1">
+            {renderSelectedTags()}
+          </div>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="start">
-          <TagList setOpen={setOpen} setSelectedTag={setSelectedTag} dataTags={dataTags} />
+          <TagList
+            setOpen={setOpen}
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            dataTags={dataTags}
+          />
         </PopoverContent>
       </Popover>
     );
@@ -48,13 +68,18 @@ export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({ dataTags }) =>
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
-          {selectedTag ? <>{selectedTag.name}</> : <>+ Tags</>}
+        <Button variant="outline" className="w-[150px] flex flex-wrap gap-1">
+          {renderSelectedTags()}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <TagList setOpen={setOpen} setSelectedTag={setSelectedTag} dataTags={dataTags} />
+          <TagList
+            setOpen={setOpen}
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            dataTags={dataTags}
+          />
         </div>
       </DrawerContent>
     </Drawer>
@@ -63,16 +88,25 @@ export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({ dataTags }) =>
 
 // ✅ Komponen daftar tag (TagList)
 function TagList({
-  setOpen,
-  setSelectedTag,
+  selectedTags,
+  setSelectedTags,
   dataTags,
 }: {
   setOpen: (open: boolean) => void;
-  setSelectedTag: (tag: Tag | null) => void;
+  selectedTags: string[]; // ✅ Sekarang hanya menyimpan string
+  setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
   dataTags: Tag[];
 }) {
-
-  console.log(dataTags && dataTags);
+  // ✅ Fungsi untuk menambah/menghapus tag dari daftar pilihan
+  const toggleTagSelection = (tag: Tag) => {
+    setSelectedTags((prevTags) => {
+      if (prevTags.includes(tag.name)) {
+        return prevTags.filter((t) => t !== tag.name); // Hapus jika sudah ada
+      } else {
+        return [...prevTags, tag.name]; // Tambahkan jika belum ada
+      }
+    });
+  };
 
   return (
     <Command>
@@ -80,18 +114,21 @@ function TagList({
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
-          {dataTags && dataTags.length === 0 ? (
+          {dataTags.length === 0 ? (
             <CommandItem disabled>No tags available</CommandItem>
           ) : (
-           dataTags && dataTags?.map((tag) => (
+            dataTags.map((tag) => (
               <CommandItem
                 key={tag.id}
-                value={tag.name.toString()}
-                onSelect={() => {
-                  setSelectedTag(tag); // ✅ Memilih tag berdasarkan `tag` bukan `priority`
-                  setOpen(false);
-                }}
+                value={tag.name}
+                onSelect={() => toggleTagSelection(tag)}
               >
+                <input
+                  type="checkbox"
+                  checked={selectedTags.includes(tag.name)}
+                  className="mr-2"
+                  readOnly
+                />
                 {tag.name}
               </CommandItem>
             ))

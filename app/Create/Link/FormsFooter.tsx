@@ -1,14 +1,23 @@
 import { Dialog } from "radix-ui"
 import { Button } from "@/components/ui/button"
-import { Creata } from "../UTM/Create"
+import { Create } from "../UTM/Create"
 import { SubmitCreate } from "./Submit"
+import React from "react"
 
 interface FormFooterProps {
     dataBody: any
+    refetch: () => void; // ✅ Tambahkan prop untuk refetch
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setDestinasionUrl: React.Dispatch<React.SetStateAction<string>>
+    destinasiUrl: string
 }
 
-export const FormFooter:React.FC<FormFooterProps> = ({
-    dataBody
+export const FormFooter: React.FC<FormFooterProps> = ({
+    dataBody,
+    refetch,
+    setOpen,
+    setDestinasionUrl,
+    destinasiUrl
 }) => {
 
     const handleClick = async () => {
@@ -16,21 +25,25 @@ export const FormFooter:React.FC<FormFooterProps> = ({
             const response = await SubmitCreate({
                 dataBody
             })
-            console.log(response);
+            console.log(response)
+            if(response.status === 201) {
+                refetch()
+                setOpen(false)
+            }
         } catch (error) {
-            
+            console.log(error);
         }
     }
 
     return (
         <>
-            <hr className="mt-5"/>
+            <hr className="mt-5" />
             <div
                 className="mt-5 flex justify-between"
             >
-                <Creata />
+                <Create setDestinationUrl={setDestinasionUrl} destinationUrl={destinasiUrl}/>
                 <Dialog.Close asChild>
-                    <Button>Create</Button>
+                    <Button onClick={() => handleClick()}>Create</Button>
                 </Dialog.Close>
             </div>
         </>

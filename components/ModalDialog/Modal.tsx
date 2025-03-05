@@ -3,7 +3,6 @@ import { Dialog } from "radix-ui";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "./styles.module.css";
 import { ModalBody } from "./ModalBody";
-import { ModalFooter } from "./ModalFooter";
 
 interface ModalProps {
 	ModalBodyComponents: React.ReactNode
