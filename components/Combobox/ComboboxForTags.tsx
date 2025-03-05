@@ -44,7 +44,7 @@ export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({
       </span>
     ));
   };
-  
+
   if (isDesktop) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -68,9 +68,9 @@ export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-[150px] flex flex-wrap gap-1">
+        <div className="w-full flex border text-sm py-1.5 px-2 rounded-md items-start flex-wrap gap-1">
           {renderSelectedTags()}
-        </Button>
+        </div>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">

@@ -35,7 +35,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
           data.map((item: any, index: number) => (
             <div
               key={index}
-              className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border"
+              className="lg:flex items-center w-full justify-between bg-white p-4 rounded-lg shadow-sm border"
             >
               <div className="flex items-center gap-4">
                 {/* Status Indicator */}

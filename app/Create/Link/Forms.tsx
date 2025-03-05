@@ -41,8 +41,8 @@ export const Forms: React.FC<FormsProps> = ({
 
     return (
         <>
-            <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2">
+            <div className="grid md:grid-cols-3 gap-3">
+                <div className="md:col-span-2">
                     <Label className="mb-3" htmlFor="link">Link</Label>
                     <Input
                         onChange={(e) => {

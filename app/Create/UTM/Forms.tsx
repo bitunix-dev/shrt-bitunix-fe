@@ -133,7 +133,7 @@ export const Forms: React.FC<FormsProps> = ({
           <div key={item.id} className="flex">
             <TooltipComponents
               Label={
-                <div className="border w-60 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-gray-50">
+                <div className="border w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-gray-50">
                   {item.icon} {item.label}
                 </div>
               }
