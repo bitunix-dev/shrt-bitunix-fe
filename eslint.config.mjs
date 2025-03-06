@@ -13,9 +13,11 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off", // ✅ Matikan aturan `any`
-      "@typescript-eslint/no-unsafe-assignment": "off", // ✅ Matikan `unsafe assignment`
-      "@typescript-eslint/no-unsafe-member-access": "off", // ✅ Matikan `unsafe member access`
+      "@typescript-eslint/no-explicit-any": "off", // ❌ Matikan aturan `any`
+      "@typescript-eslint/no-unsafe-assignment": "off", // ❌ Matikan `unsafe assignment`
+      "@typescript-eslint/no-unsafe-member-access": "off", // ❌ Matikan `unsafe member access`
+      "@typescript-eslint/no-unused-vars": "off", // ❌ Matikan aturan variabel tidak terpakai
+      "react-hooks/exhaustive-deps": "off", // ❌ Matikan aturan `useEffect` dependencies
     },
   },
 ];

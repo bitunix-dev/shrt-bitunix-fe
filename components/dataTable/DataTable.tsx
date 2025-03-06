@@ -9,14 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Header } from "./Header";
+import { Pagination } from "./Pagination";
+import { ModalForEditing } from "./ModalForEditing";
+import Image from "next/image";
 
 interface DataTableProps {
   BtnCreate: React.ReactNode;
@@ -25,23 +21,82 @@ interface DataTableProps {
 
 export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   const [selectedItem, setSelectedItem] = React.useState<any>(null);
+  const [searchQuery, setSearchQuery] = React.useState(""); // ✅ State pencarian
+
+  // ✅ Paginasi State
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 8;
+
+  // ✅ Filter data berdasarkan searchQuery
+  const filteredData = data?.filter((item: any) =>
+    item.short_link.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.destination_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.tags?.some((tag: any) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  // ✅ Hitung jumlah total halaman
+  const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
+
+  // ✅ Filter data sesuai halaman aktif
+  const paginatedData = filteredData?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // ✅ Fungsi Navigasi Halaman
+  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  const getFavicon = (url: string | URL) => {
+    try {
+      const hostname = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+    } catch (error) {
+      console.error("Invalid URL:", url);
+      return "/default-favicon.png"; // ✅ Gambar default jika URL tidak valid
+    }
+  };
+
+  const FaviconWithFallback = ({ url }: { url: string | URL }) => {
+    const [faviconExists, setFaviconExists] = React.useState(true);
+    const faviconUrl = getFavicon(url);
+
+    return (
+      <div className="w-6 h-6 flex items-center justify-center">
+        {faviconExists ? (
+          <img
+            src={faviconUrl}
+            alt="Favicon"
+            className="w-6 h-6 rounded-full border-2 border-green-400"
+            onError={() => setFaviconExists(false)} // ✅ Jika gagal, tampilkan fallback
+          />
+        ) : (
+          <img
+            src="/default-favicon.png"
+            alt="Fallback Favicon"
+            className="w-6 h-6 rounded-full border-2 border-gray-400"
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-20">
       {/* HEADER */}
-      <Header BtnCreate={BtnCreate} />
+      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} /> {/* ✅ Pass setSearchQuery */}
 
       {/* LIST VIEW */}
       <div className="mt-4 space-y-2">
-        {data && data.length ? (
-          data.map((item: any, index: number) => (
+        {paginatedData && paginatedData.length ? (
+          paginatedData.map((item: any, index: number) => (
             <div
               key={index}
               className="lg:flex items-center w-full justify-between bg-neutral-800 border border-neutral-800 p-4 rounded-lg shadow-sm"
             >
               <div className="flex items-center gap-4">
                 {/* Status Indicator */}
-                <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                <FaviconWithFallback url={item.destination_url} />
 
                 {/* Link Info */}
                 <div>
@@ -56,14 +111,20 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                       <Copy className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="text-gray-500 text-sm">
+                  <div className="text-gray-500 text-sm w-full">
                     <a
                       href={item.destination_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 hover:underline"
                     >
-                      ↳ {item.destination_url}
+                      ↳
+                      <span className="hidden md:inline">{item.destination_url}</span>
+                      <span className="inline md:hidden truncate max-w-[200px]" title={item.destination_url}>
+                        {item.destination_url.length > 30
+                          ? `${item.destination_url.substring(0, 30)}...`
+                          : item.destination_url}
+                      </span>
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
@@ -92,17 +153,9 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     align="end"
                     className="bg-neutral-900 text-white border border-bg-neutral-800"
                   >
-                    <DropdownMenuItem onClick={() => setSelectedItem(item)}>
-                      Edit
-                    </DropdownMenuItem>
+                    
                     <DropdownMenuItem>QR Code</DropdownMenuItem>
-                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
                     <DropdownMenuItem>Copy Link ID</DropdownMenuItem>
-                    <DropdownMenuItem>Archive</DropdownMenuItem>
-                    <DropdownMenuItem>Transfer</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
-                      Delete
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -113,28 +166,22 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
         )}
       </div>
 
+      {/* ✅ PAGINATION CONTROL */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          nextPage={nextPage}
+          prevPage={prevPage}
+        />
+      )}
+
       {/* Modal for Editing */}
       {selectedItem && (
-        <Dialog
-          open={Boolean(selectedItem)}
-          onOpenChange={() => setSelectedItem(null)}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Link</DialogTitle>
-              <DialogDescription>
-                Modify the short link details.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="p-4">
-              <p className="text-lg font-semibold">{selectedItem.short_link}</p>
-              <p className="text-sm text-gray-500">
-                Destination: {selectedItem.destination_url}
-              </p>
-            </div>
-            <Button onClick={() => setSelectedItem(null)}>Close</Button>
-          </DialogContent>
-        </Dialog>
+        <ModalForEditing
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+        />
       )}
     </div>
   );

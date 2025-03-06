@@ -1,4 +1,5 @@
 import { Link, Scissors, Tag } from "lucide-react";
+import Image from "next/image";
 
 import {
   Sidebar,
@@ -37,7 +38,12 @@ export function AppSidebar() {
       <SidebarContent className="bg-neutral-950 text-white">
         <SidebarGroup>
           <SidebarGroupLabel className="text-white text-md mb-3">
-            Bitunix Shorten App
+            <Image
+              src={'https://res.cloudinary.com/dilb4d364/image/upload/v1741247207/logo_file-01_lif9pq.png'}
+              width={200}
+              height={100}
+              alt="logo"
+            />
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
