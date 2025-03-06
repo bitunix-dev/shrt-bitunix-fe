@@ -13,6 +13,8 @@ import {
   SidebarInformation,
 } from "@/components/ui/sidebar";
 
+import { Badge } from "@/components/ui/badge"
+
 // Menu items.
 const items = [
   {
@@ -24,6 +26,7 @@ const items = [
     title: "Analytics",
     url: "#shorten",
     icon: BarChart,
+    comingSoon: true,
   },
 ];
 
@@ -48,14 +51,19 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="bg-lime-500 text-black my-0.5 px-4"
+                    className="bg-lime-500 text-black my-0.5 px-4 flex justify-between"
                   >
                     <a
                       href={item.url}
                       className="flex items-center gap-2 text-sm"
                     >
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.title}</span>
+                      <div className="flex items-center gap-1">
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.title}</span>
+                      </div>
+                      {item.comingSoon && (
+                        <Badge className="bg-lime-600 float-end">Soon</Badge>
+                      )}
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

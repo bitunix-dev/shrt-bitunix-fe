@@ -30,6 +30,13 @@ export const Create: React.FC<CreateProps> = ({
     const dataBody = {
         "destination_url": destinationUrl,
         "tags": tags,
+        "short_link": shortLink,
+        "source": source,
+        "medium": medium,
+        "campaign": campaign,
+        "term": term,
+        "content": content,
+        "referral": referral
     }
 
     return (
