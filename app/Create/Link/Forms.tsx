@@ -24,7 +24,7 @@ export const Forms: React.FC<FormsProps> = ({
   shortLink,
   destinationUrl,
 }) => {
-  const [isCustomShortLink, setIsCustomShortLink] = useState(false); // ✅ Menandai apakah user mengedit short link
+  const [isCustomShortLink, setIsCustomShortLink] = useState(false);
 
   // ✅ Fungsi untuk generate random string 6 huruf
   const generateRandomString = (length = 6) => {
@@ -36,12 +36,12 @@ export const Forms: React.FC<FormsProps> = ({
     ).join("");
   };
 
-  // ✅ Gunakan useEffect untuk generate short link saat komponen pertama kali di-mount
+  // ✅ Gunakan useEffect untuk generate short link hanya saat komponen pertama kali di-mount
   useEffect(() => {
-    if (!shortLink) {
+    if (!shortLink && !isCustomShortLink) {
       setShortLink(generateRandomString(6));
     }
-  }, [shortLink]);
+  }, []); // Hanya dijalankan sekali saat mount
 
   return (
     <>
@@ -54,7 +54,7 @@ export const Forms: React.FC<FormsProps> = ({
             onChange={(e) => {
               setDestinationUrl(e.target.value);
               if (!isCustomShortLink) {
-                setShortLink(generateRandomString(6)); // ✅ Hanya generate jika user belum custom
+                setShortLink(generateRandomString(6)); // ✅ Generate hanya jika belum custom
               }
             }}
             value={destinationUrl}
@@ -70,10 +70,10 @@ export const Forms: React.FC<FormsProps> = ({
               className="rounded-l-none"
               id="short-link"
               placeholder="Masukkan short link atau gunakan default"
-              value={shortLink} // ✅ User bisa input manual
+              value={shortLink}
               onChange={(e) => {
                 setShortLink(e.target.value);
-                setIsCustomShortLink(true); // ✅ Tandai bahwa user mengedit short link
+                setIsCustomShortLink(e.target.value.trim() !== ""); // ✅ Tandai jika user mengedit short link
               }}
             />
           </div>
@@ -85,14 +85,14 @@ export const Forms: React.FC<FormsProps> = ({
           />
         </div>
         <div className="bg-neutral-900 text-white font-bold p-3 border border-neutral-900 rounded-md">
-          <h2 className="text-center">QR CODE</h2> {/* ✅ Center the text */}
+          <h2 className="text-center">QR CODE</h2>
           <div
             className="relative mt-2 py-1 rounded-md flex items-center justify-center border border-neutral-900"
             style={{
               backgroundImage:
                 "radial-gradient(rgba(255,255,255,0.2) 20%, transparent 20%)",
               backgroundSize: "5px 5px",
-              opacity: 0.8, // ✅ Adjust opacity if needed
+              opacity: 0.8,
             }}
           >
             <QRCodeGenerator

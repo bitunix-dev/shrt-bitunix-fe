@@ -31,7 +31,7 @@ const Modal: React.FC<ModalProps> = ({
     <Dialog.Trigger asChild>{BtnCreate}</Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className={`${styles.Overlay} ${zIndex}`} />
-      <Dialog.Content className={`${styles.Content} ${width} overflow-scroll`}>
+      <Dialog.Content className={`${styles.Content} ${width} md:overflow-hidden overflow-y-scroll`}>
         <Dialog.Title className={styles.Title}>{ModalTitle}</Dialog.Title>
         <Dialog.Description className={styles.Description}>
           {ModalDescription}
