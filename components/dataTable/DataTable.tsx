@@ -12,6 +12,7 @@ import {
 import { Header } from "./Header";
 import { Pagination } from "./Pagination";
 import { ModalForEditing } from "./ModalForEditing";
+import { ModalForQRCode } from "./ModalForQRCode";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
@@ -22,7 +23,8 @@ interface DataTableProps {
 
 export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   const [selectedItem, setSelectedItem] = React.useState<any>(null);
-  const [searchQuery, setSearchQuery] = React.useState(""); // ✅ State pencarian
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [qrCodeItem, setQrCodeItem] = React.useState<any>(null);
 
   // ✅ Paginasi State
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -96,6 +98,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
       },
     });
   };
+
   return (
     <div className="w-full mb-20">
       {/* HEADER */}
@@ -119,7 +122,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     {item.short_link}
                     <button
                       className="text-gray-500 hover:text-white"
-                      onClick={() => handleCopy(item.short_link)} // ✅ Gunakan handleCopy
+                      onClick={() => handleCopy(item.short_link)}
                     >
                       <Copy className="w-4 h-4" />
                     </button>
@@ -140,7 +143,6 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                           ? `${item.destination_url.substring(0, 155)}...`
                           : item.destination_url}
                       </span>
-                      {/* ✅ Mobile: Jika lebih dari 30 karakter, truncate */}
                       <span
                         className="inline md:hidden truncate max-w-[300px]"
                         title={item.destination_url}
@@ -169,8 +171,6 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                           {tag.name}
                         </span>
                       ))}
-
-                    {/* ✅ If more than 2 tags exist, show "+X" */}
                     {item.tags?.length > 2 && (
                       <span className="px-2 py-1 text-xs font-medium text-black bg-lime-400 rounded-md">
                         +{item.tags.length - 2}
@@ -183,7 +183,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                   <Image
                     src="https://res.cloudinary.com/dilb4d364/image/upload/v1741254010/heart-rate_mmawvw.png"
                     alt="Click Icon"
-                    width={16} // Sesuaikan ukuran
+                    width={16}
                     height={16}
                     className="w-4 h-4"
                   />
@@ -201,7 +201,10 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     align="end"
                     className="bg-neutral-900 text-white border border-bg-neutral-800"
                   >
-                    <DropdownMenuItem>QR Code</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setQrCodeItem(item)}>
+                      QR Code
+                    </DropdownMenuItem>
+
                     <DropdownMenuItem
                       onClick={() => handleCopy(item.short_link)}
                     >
@@ -225,12 +228,9 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
           prevPage={prevPage}
         />
       )}
-      {/* Modal for Editing */}
-      {selectedItem && (
-        <ModalForEditing
-          selectedItem={selectedItem}
-          setSelectedItem={setSelectedItem}
-        />
+      {/* ✅ Tambahkan Modal QR Code di bawah pagination */}
+      {qrCodeItem && (
+        <ModalForQRCode item={qrCodeItem} onClose={() => setQrCodeItem(null)} />
       )}
     </div>
   );
