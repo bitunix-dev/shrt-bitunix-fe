@@ -5,8 +5,8 @@ export function middleware(req: NextRequest) {
     const url = req.nextUrl;
     const path = url.pathname.slice(1); // ✅ Ambil slug setelah "/"
 
-    // ✅ Cek apakah path merupakan slug yang valid (random string)
-    const isSlug = /^[a-zA-Z0-9]+$/.test(path);
+    // ✅ Cek apakah path merupakan slug yang valid (random string), dan bukan "analytics"
+    const isSlug = /^[a-zA-Z0-9]+$/.test(path) && path !== "analytics";
 
     if (isSlug) {
         // ✅ Redirect ke API route untuk diproses

@@ -24,7 +24,7 @@ const items = [
   },
   {
     title: "Analytics",
-    url: "#shorten",
+    url: "/analytics",
     icon: BarChart,
     comingSoon: true,
   },
