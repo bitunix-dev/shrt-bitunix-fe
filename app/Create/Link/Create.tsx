@@ -18,6 +18,12 @@ export const Create: React.FC<CreateProps> = ({
     const [destinationUrl, setDestinationUrl] = useState<string>('')
     const [tags, setTags] = useState<[]>([])
     const [shortLink, setShortLink] = useState<string>(""); // ✅ State untuk menyimpan short link
+    const [medium, setMedium] = useState<string>("")
+    const [source, setSource] = useState<string>("")
+    const [campaign, setCampaign] = useState<string>("")
+    const [term, setTerm] = useState<string>("")
+    const [content, setContent] = useState<string>("")
+    const [referral, setReferral] = useState<string>("")
 
     const { data } = useGetTags()
 
@@ -50,7 +56,20 @@ export const Create: React.FC<CreateProps> = ({
                     refetch={refetch}
                     setOpen={setOpen}
                     setDestinasionUrl={setDestinationUrl}
-                    destinasiUrl={destinationUrl}
+                    destinasiUrl={destinationUrl} 
+                    open={false} 
+                    source={source} 
+                    setSource={setSource} 
+                    medium={medium} 
+                    setMedium={setMedium} 
+                    campaign={campaign} 
+                    setCampaign={setCampaign} 
+                    term={term} 
+                    setTerm={setTerm} 
+                    content={content} 
+                    setContent={setContent} 
+                    referral={referral} 
+                    setReferral={setReferral} 
                 />}
             />
         </>

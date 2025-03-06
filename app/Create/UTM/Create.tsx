@@ -3,26 +3,44 @@
 import Modal from "@/components/ModalDialog/Modal";
 import { BtnCreate } from "./BtnCreate";
 import { Forms } from "./Forms";
-import { useState } from "react";
 import { FormFooter } from "./FormsFooter";
+import { useState } from "react";
 
 interface CreateUtmProps {
-    setDestinationUrl: React.Dispatch<React.SetStateAction<string>>
-    destinationUrl: string
+    setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
+    destinationUrl: string;
+    source: string;
+    setSource: React.Dispatch<React.SetStateAction<string>>;
+    medium: string;
+    setMedium: React.Dispatch<React.SetStateAction<string>>;
+    campaign: string;
+    setCampaign: React.Dispatch<React.SetStateAction<string>>;
+    term: string;
+    setTerm: React.Dispatch<React.SetStateAction<string>>;
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>;
+    referral: string;
+    setReferral: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const Create:React.FC<CreateUtmProps> = ({
+export const Create: React.FC<CreateUtmProps> = ({
     setDestinationUrl,
-    destinationUrl
+    destinationUrl,
+    source,
+    setSource,
+    medium,
+    setMedium,
+    campaign,
+    setCampaign,
+    term,
+    setTerm,
+    content,
+    setContent,
+    referral,
+    setReferral
 }) => {
 
-    const [open, setOpen] = useState(false);
-    const [source, setSource] = useState<string>('')
-    const [medium, setMedium] = useState<string>('')
-    const [campaign, setCampaign] = useState<string>('')
-    const [term, setTerm] = useState<string>('')
-    const [content, setContent] = useState<string>('')
-    const [referral, setReferral] = useState<string>('')
+    const [open, setOpen] = useState<boolean>(false)
 
     return (
         <>
@@ -56,5 +74,5 @@ export const Create:React.FC<CreateUtmProps> = ({
                 ModalFooter={<FormFooter setOpen={setOpen}/>}
             />
         </>
-    )
-}
+    );
+};
