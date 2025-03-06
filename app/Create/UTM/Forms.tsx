@@ -28,7 +28,8 @@ interface FormsProps {
 }
 
 // ✅ Fungsi untuk mengganti spasi dengan dash (-)
-const normalizeText = (text: string) => text.trim().replace(/\s+/g, "-");
+const normalizeText = (text: string) =>
+  text.trim().toLowerCase().replace(/\s+/g, "-");
 
 export const Forms: React.FC<FormsProps> = ({
   source,
