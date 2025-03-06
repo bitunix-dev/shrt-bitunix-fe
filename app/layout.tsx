@@ -112,7 +112,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://Bitunix-shorten.com"),
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -121,11 +120,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-neutral-900 antialiased`}
       >
-        <ClientLayouts>
-          {children}
-        </ClientLayouts>
+        <ClientLayouts>{children}</ClientLayouts>
       </body>
     </html>
   );

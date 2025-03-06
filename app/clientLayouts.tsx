@@ -18,7 +18,7 @@ export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
         <SidebarProvider>
           <AppSidebar />
           <main className="w-full">
-            <SidebarTrigger />
+            <SidebarTrigger className="text-white" />
             <div className="p-5 w-8xl mx-auto">{children}</div>
           </main>
         </SidebarProvider>

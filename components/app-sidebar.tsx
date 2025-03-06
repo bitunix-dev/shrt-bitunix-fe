@@ -33,15 +33,20 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
-      <SidebarContent>
+    <Sidebar className="text-white">
+      <SidebarContent className="bg-neutral-950 text-white">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white text-md mb-3">
+            Bitunix Shorten App
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    className="bg-lime-500 text-black my-0.5 px-4"
+                  >
                     <a
                       href={item.url}
                       className="flex items-center gap-2 text-sm"

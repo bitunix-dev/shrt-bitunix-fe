@@ -263,7 +263,7 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-10 w-10", className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
@@ -499,7 +499,7 @@ function SidebarMenuButton({
   asChild = false,
   isActive = false,
   variant = "default",
-  size = "default",
+  size = "lg",
   tooltip,
   className,
   ...props
@@ -703,10 +703,7 @@ function SidebarInformation({
 }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "text-xs text-muted-foreground px-4 pb-4 leading-relaxed",
-        className
-      )}
+      className={cn("text-xs text-white px-4 pb-4 leading-relaxed", className)}
       {...props}
     >
       Bitunix-shorten simplifies your marketing campaigns with URL shortening &
