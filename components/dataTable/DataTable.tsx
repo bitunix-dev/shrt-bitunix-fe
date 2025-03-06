@@ -13,6 +13,7 @@ import { Header } from "./Header";
 import { Pagination } from "./Pagination";
 import { ModalForEditing } from "./ModalForEditing";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 interface DataTableProps {
   BtnCreate: React.ReactNode;
@@ -84,7 +85,17 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
       </div>
     );
   };
-
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Shorten link has been copied!", {
+      position: "top-right",
+      duration: 2000,
+      style: {
+        background: "#333",
+        color: "#fff",
+      },
+    });
+  };
   return (
     <div className="w-full mb-20">
       {/* HEADER */}
@@ -108,9 +119,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     {item.short_link}
                     <button
                       className="text-gray-500 hover:text-white"
-                      onClick={() =>
-                        navigator.clipboard.writeText(item.short_link)
-                      }
+                      onClick={() => handleCopy(item.short_link)} // ✅ Gunakan handleCopy
                     >
                       <Copy className="w-4 h-4" />
                     </button>

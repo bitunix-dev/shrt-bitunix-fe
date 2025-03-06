@@ -27,6 +27,9 @@ interface FormsProps {
   setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
+// ✅ Fungsi untuk mengganti spasi dengan dash (-)
+const normalizeText = (text: string) => text.trim().replace(/\s+/g, "-");
+
 export const Forms: React.FC<FormsProps> = ({
   source,
   setSource,
@@ -45,23 +48,20 @@ export const Forms: React.FC<FormsProps> = ({
 }) => {
   useEffect(() => {
     try {
-      // ✅ Pastikan hanya domain utama yang dipertahankan
       const url = new URL(destinationUrl.split("?")[0]); // Hapus query params lama
-
       const params = new URLSearchParams();
-      if (source) params.set("utm_source", source);
-      if (medium) params.set("utm_medium", medium);
-      if (campaign) params.set("utm_campaign", campaign);
-      if (term) params.set("utm_term", term);
-      if (content) params.set("utm_content", content);
-      if (referral) params.set("ref", referral);
 
-      // ✅ Buat URL baru dengan query params yang bersih
+      if (source) params.set("utm_source", normalizeText(source));
+      if (medium) params.set("utm_medium", normalizeText(medium));
+      if (campaign) params.set("utm_campaign", normalizeText(campaign));
+      if (term) params.set("utm_term", normalizeText(term));
+      if (content) params.set("utm_content", normalizeText(content));
+      if (referral) params.set("ref", normalizeText(referral));
+
       const newUrl = params.toString()
         ? `${url.origin}${url.pathname}?${params.toString()}`
         : `${url.origin}${url.pathname}`;
 
-      // ✅ Hanya update jika URL baru berbeda dengan yang lama
       if (newUrl !== destinationUrl) {
         setDestinationUrl(newUrl);
       }
@@ -129,7 +129,7 @@ export const Forms: React.FC<FormsProps> = ({
 
   return (
     <>
-      <div className="space-y-3 b">
+      <div className="space-y-3">
         {dataSet.map((item) => (
           <div key={item.id} className="flex">
             <TooltipComponents
