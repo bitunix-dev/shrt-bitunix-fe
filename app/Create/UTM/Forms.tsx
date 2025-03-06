@@ -43,7 +43,6 @@ export const Forms: React.FC<FormsProps> = ({
   destinationUrl,
   setDestinationUrl,
 }) => {
-
   useEffect(() => {
     try {
       // ✅ Pastikan hanya domain utama yang dipertahankan
@@ -58,7 +57,9 @@ export const Forms: React.FC<FormsProps> = ({
       if (referral) params.set("ref", referral);
 
       // ✅ Buat URL baru dengan query params yang bersih
-      const newUrl = params.toString() ? `${url.origin}${url.pathname}?${params.toString()}` : `${url.origin}${url.pathname}`;
+      const newUrl = params.toString()
+        ? `${url.origin}${url.pathname}?${params.toString()}`
+        : `${url.origin}${url.pathname}`;
 
       // ✅ Hanya update jika URL baru berbeda dengan yang lama
       if (newUrl !== destinationUrl) {
@@ -72,7 +73,7 @@ export const Forms: React.FC<FormsProps> = ({
   const dataSet = [
     {
       id: "source",
-      label: "utm_source",
+      label: "Source",
       icon: <Globe className="w-4 h-4" />,
       placeholder: "google",
       tooltip: "where the traffic is coming from",
@@ -81,43 +82,43 @@ export const Forms: React.FC<FormsProps> = ({
     },
     {
       id: "medium",
-      label: "utm_medium",
+      label: "Medium",
       icon: <RadioTower className="w-4 h-4" />,
       placeholder: "cpc",
-      tooltip: "what type of marketing medium",
+      tooltip: "how the traffic is coming",
       value: medium,
       setValue: setMedium,
     },
     {
       id: "campaign",
-      label: "utm_campaign",
+      label: "Campaign",
       icon: <FlagTriangleRight className="w-4 h-4" />,
       placeholder: "summer sale",
-      tooltip: "which campaign the link is part of",
+      tooltip: "the name of the campaign",
       value: campaign,
       setValue: setCampaign,
     },
     {
       id: "term",
-      label: "utm_term",
+      label: "Term",
       icon: <FolderSearch2 className="w-4 h-4" />,
       placeholder: "running shoes",
-      tooltip: "used for paid search campaigns",
+      tooltip: "the term of the campaign",
       value: term,
       setValue: setTerm,
     },
     {
       id: "content",
-      label: "utm_content",
+      label: "Content",
       icon: <ScrollText className="w-4 h-4" />,
       placeholder: "logo link",
-      tooltip: "used to differentiate ads",
+      tooltip: "the content of the campaign",
       value: content,
       setValue: setContent,
     },
     {
       id: "referral",
-      label: "ref",
+      label: "Referral",
       icon: <Gift className="w-4 h-4" />,
       placeholder: "yoursite.com",
       tooltip: "who referred the traffic",
@@ -128,27 +129,29 @@ export const Forms: React.FC<FormsProps> = ({
 
   return (
     <>
-      <div className="space-y-3">
+      <div className="space-y-3 b">
         {dataSet.map((item) => (
           <div key={item.id} className="flex">
             <TooltipComponents
               Label={
-                <div className="border w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-gray-50">
+                <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-neutral-900">
                   {item.icon} {item.label}
                 </div>
               }
               content={`Enter ${item.tooltip.toLowerCase()}`}
             />
             <Input
-              className="rounded-l-none"
+              className="rounded-l-none border border-neutral-800"
               placeholder={item.placeholder}
               value={item.value}
               onChange={(e) => item.setValue(e.target.value)}
+              autoFocus
             />
           </div>
         ))}
       </div>
       <div className="mt-5">
+        <h4>Link preview:</h4>
         <Input value={destinationUrl} disabled></Input>
       </div>
     </>

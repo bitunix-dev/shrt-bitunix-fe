@@ -11,7 +11,11 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tags } from "lucide-react";
 
 // ✅ Definisikan TypeScript untuk `Tag`
@@ -36,9 +40,17 @@ export const ComboBoxForTags: React.FC<ComboBoxForTagsProps> = ({
 
   // ✅ Menampilkan tag yang sudah dipilih di dalam button
   const renderSelectedTags = () => {
-    if (selectedTags.length === 0) return <><Tags className="w-4" /> Tags</>;
+    if (selectedTags.length === 0)
+      return (
+        <>
+          <Tags className="w-4" /> Tags
+        </>
+      );
     return selectedTags.map((tag) => (
-      <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-sm mr-1">
+      <span
+        key={tag}
+        className="bg-gray-200 text-neutral-800 px-2 py-1 rounded text-sm mr-1"
+      >
         {tag}
       </span>
     ));

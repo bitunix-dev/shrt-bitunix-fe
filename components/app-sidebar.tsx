@@ -1,4 +1,4 @@
-import { Link, Scissors, Tag } from "lucide-react";
+import { Link, BarChart } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -17,18 +17,13 @@ import {
 const items = [
   {
     title: "Links",
-    url: "#",
+    url: "/",
     icon: Link,
   },
   {
-    title: "Shorten Link",
+    title: "Analytics",
     url: "#shorten",
-    icon: Scissors,
-  },
-  {
-    title: "UTM Builder",
-    url: "#utm-builder",
-    icon: Tag,
+    icon: BarChart,
   },
 ];
 
@@ -37,15 +32,17 @@ export function AppSidebar() {
     <Sidebar className="text-white">
       <SidebarContent className="bg-neutral-950 text-white">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-white text-md mb-3">
+          <SidebarGroupLabel className="text-white text-md my-4 mx-4">
             <Image
-              src={'https://res.cloudinary.com/dilb4d364/image/upload/v1741247207/logo_file-01_lif9pq.png'}
+              src={
+                "https://res.cloudinary.com/dilb4d364/image/upload/v1741247207/logo_file-01_lif9pq.png"
+              }
               width={200}
               height={100}
               alt="logo"
             />
           </SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="mt-4">
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>

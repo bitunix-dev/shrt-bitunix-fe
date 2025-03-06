@@ -53,7 +53,7 @@ export function ComboboxForLink() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[180px] justify-between rounded-r-none"
+          className="w-[180px] justify-between text-black rounded-r-none"
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label

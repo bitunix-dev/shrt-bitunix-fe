@@ -17,7 +17,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     <div className="flex justify-center items-center gap-3 mt-6">
       {/* Tombol Previous */}
       <Button
-        className="bg-lime-500 text-black"
+        className="bg-lime-500 hover:bg-lime-600 text-black"
         onClick={prevPage}
         disabled={currentPage === 1} // ✅ Disabled jika di halaman pertama
       >
@@ -31,7 +31,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Tombol Next */}
       <Button
-        className="bg-lime-500 text-black"
+        className="bg-lime-500 hover:bg-lime-600 text-black"
         onClick={nextPage}
         disabled={currentPage === totalPages} // ✅ Disabled jika di halaman terakhir
       >

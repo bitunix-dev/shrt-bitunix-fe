@@ -12,6 +12,7 @@ import {
 import { Header } from "./Header";
 import { Pagination } from "./Pagination";
 import { ModalForEditing } from "./ModalForEditing";
+import Image from "next/image";
 
 interface DataTableProps {
   BtnCreate: React.ReactNode;
@@ -24,13 +25,16 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
 
   // ✅ Paginasi State
   const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
 
   // ✅ Filter data berdasarkan searchQuery
-  const filteredData = data?.filter((item: any) =>
-    item.short_link.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.destination_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.tags?.some((tag: any) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredData = data?.filter(
+    (item: any) =>
+      item.short_link.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.destination_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.tags?.some((tag: any) =>
+        tag.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   );
 
   // ✅ Hitung jumlah total halaman
@@ -43,7 +47,8 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   );
 
   // ✅ Fungsi Navigasi Halaman
-  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   const getFavicon = (url: string | URL) => {
@@ -83,8 +88,8 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   return (
     <div className="w-full mb-20">
       {/* HEADER */}
-      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} /> {/* ✅ Pass setSearchQuery */}
-
+      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} />{" "}
+      {/* ✅ Pass setSearchQuery */}
       {/* LIST VIEW */}
       <div className="mt-4 space-y-2">
         {paginatedData && paginatedData.length ? (
@@ -118,8 +123,13 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                       className="flex items-center gap-1 hover:underline"
                     >
                       ↳
-                      <span className="hidden md:inline">{item.destination_url}</span>
-                      <span className="inline md:hidden truncate max-w-[200px]" title={item.destination_url}>
+                      <span className="hidden md:inline">
+                        {item.destination_url}
+                      </span>
+                      <span
+                        className="inline md:hidden truncate max-w-[200px]"
+                        title={item.destination_url}
+                      >
                         {item.destination_url.length > 30
                           ? `${item.destination_url.substring(0, 30)}...`
                           : item.destination_url}
@@ -133,12 +143,34 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
               {/* Tags & Clicks */}
               <div className="flex items-center gap-2">
                 {item.tags?.length > 0 && (
-                  <span className="px-2 py-1 text-xs font-medium text-black bg-lime-500 rounded-md">
-                    {item.tags[0].name}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    {item.tags.slice(0, 2).map((tag, index) => (
+                      <span
+                        key={tag.id}
+                        className="px-2 py-1 text-xs font-medium text-black bg-lime-500 rounded-md"
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+
+                    {/* ✅ If more than 2 tags exist, show "+X" */}
+                    {item.tags.length > 2 && (
+                      <span className="px-2 py-1 text-xs font-medium text-black bg-lime-400 rounded-md">
+                        +{item.tags.length - 2}
+                      </span>
+                    )}
+                  </div>
                 )}
-                <span className="text-sm bg-neutral-600 text-white px-3 py-1 border-neutral-800 rounded-md">
-                  👆 {item.clicks} clicks
+
+                <span className="text-sm bg-neutral-600 text-white px-3 py-1 border-neutral-800 rounded-md flex items-center gap-1">
+                  <Image
+                    src="https://res.cloudinary.com/dilb4d364/image/upload/v1741254010/heart-rate_mmawvw.png"
+                    alt="Click Icon"
+                    width={16} // Sesuaikan ukuran
+                    height={16}
+                    className="w-4 h-4"
+                  />
+                  {Number(item.clicks).toLocaleString("en-US")} clicks
                 </span>
 
                 {/* Actions */}
@@ -152,7 +184,6 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     align="end"
                     className="bg-neutral-900 text-white border border-bg-neutral-800"
                   >
-                    
                     <DropdownMenuItem>QR Code</DropdownMenuItem>
                     <DropdownMenuItem>Copy Link ID</DropdownMenuItem>
                   </DropdownMenuContent>
@@ -164,7 +195,6 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
           <p className="text-center text-gray-500">No results.</p>
         )}
       </div>
-
       {/* ✅ PAGINATION CONTROL */}
       {totalPages > 1 && (
         <Pagination
@@ -174,7 +204,6 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
           prevPage={prevPage}
         />
       )}
-
       {/* Modal for Editing */}
       {selectedItem && (
         <ModalForEditing
