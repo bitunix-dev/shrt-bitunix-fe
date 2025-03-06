@@ -10,6 +10,19 @@ interface FormFooterProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setDestinasionUrl: React.Dispatch<React.SetStateAction<string>>;
   destinasiUrl: string;
+  open: boolean;
+  source: string;
+  setSource: React.Dispatch<React.SetStateAction<string>>;
+  medium: string;
+  setMedium: React.Dispatch<React.SetStateAction<string>>;
+  campaign: string;
+  setCampaign: React.Dispatch<React.SetStateAction<string>>;
+  term: string;
+  setTerm: React.Dispatch<React.SetStateAction<string>>;
+  content: string;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
+  referral: string;
+  setReferral: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const FormFooter: React.FC<FormFooterProps> = ({
@@ -18,6 +31,18 @@ export const FormFooter: React.FC<FormFooterProps> = ({
   setOpen,
   setDestinasionUrl,
   destinasiUrl,
+  source,
+  setSource,
+  medium,
+  setMedium,
+  campaign,
+  setCampaign,
+  term,
+  setTerm,
+  content,
+  setContent,
+  referral,
+  setReferral
 }) => {
   const handleClick = async () => {
     try {
@@ -41,7 +66,18 @@ export const FormFooter: React.FC<FormFooterProps> = ({
         <Create
           setDestinationUrl={setDestinasionUrl}
           destinationUrl={destinasiUrl}
-        />
+          setSource={setSource}
+          source={source}
+          setCampaign={setCampaign}
+          campaign={campaign}
+          setMedium={setMedium}
+          medium={medium}
+          setContent={setContent}
+          content={content}
+          setReferral={setReferral}
+          referral={referral} 
+          term={term} 
+          setTerm={setTerm}        />
         <Dialog.Close asChild>
           <Button
             onClick={() => handleClick()}
