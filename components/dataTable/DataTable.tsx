@@ -15,7 +15,7 @@ import { ModalForEditing } from "./ModalForEditing";
 import { ModalForQRCode } from "./ModalForQRCode";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DataTableProps {
   BtnCreate: React.ReactNode;
@@ -72,15 +72,13 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
     return (
       <div className="w-6 h-6 flex items-center justify-center">
         {faviconExists ? (
-          <Avatar>
-            <AvatarImage src={faviconUrl} />
-          </Avatar>
-        ) : (
           <img
-            src="/default-favicon.png"
-            alt="Fallback Favicon"
-            className="w-6 h-6 rounded-full border-2 border-gray-400"
+            src={faviconUrl}
+            alt="Favicon URL"
+            className="w-6 h-6 rounded-full border-2 border-green-400 p-0.5"
           />
+        ) : (
+          <div className="w-6 h-6 rounded-full bg-green-400"></div>
         )}
       </div>
     );
