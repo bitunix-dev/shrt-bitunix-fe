@@ -9,8 +9,7 @@ interface FormFooterProps {
 export const FormFooter: React.FC<FormFooterProps> = ({ setOpen }) => {
   return (
     <>
-      <hr className="mt-5" />
-      <div className="mt-5 text-end">
+      <div className="mt-8 text-end">
         <Dialog.Close asChild>
           <Button
             onClick={() => setOpen(false)}

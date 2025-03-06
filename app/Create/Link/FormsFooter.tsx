@@ -36,8 +36,7 @@ export const FormFooter: React.FC<FormFooterProps> = ({
 
   return (
     <>
-      <hr className="mt-5" />
-      <div className="mt-5 flex justify-between">
+      <div className="mt-8 flex justify-between">
         <Create
           setDestinationUrl={setDestinasionUrl}
           destinationUrl={destinasiUrl}
