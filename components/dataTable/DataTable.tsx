@@ -144,17 +144,19 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
               <div className="flex items-center gap-2">
                 {item.tags?.length > 0 && (
                   <div className="flex items-center gap-1">
-                    {item.tags.slice(0, 2).map((tag, index) => (
-                      <span
-                        key={tag.id}
-                        className="px-2 py-1 text-xs font-medium text-black bg-lime-500 rounded-md"
-                      >
-                        {tag.name}
-                      </span>
-                    ))}
+                    {item.tags
+                      .slice(0, 2)
+                      .map((tag: { id: number; name: string }) => (
+                        <span
+                          key={tag.id}
+                          className="px-2 py-1 text-xs font-medium text-black bg-lime-500 rounded-md"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
 
                     {/* ✅ If more than 2 tags exist, show "+X" */}
-                    {item.tags.length > 2 && (
+                    {item.tags?.length > 2 && (
                       <span className="px-2 py-1 text-xs font-medium text-black bg-lime-400 rounded-md">
                         +{item.tags.length - 2}
                       </span>
