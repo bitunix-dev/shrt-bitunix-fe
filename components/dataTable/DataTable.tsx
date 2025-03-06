@@ -136,8 +136,8 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                         className="hidden md:inline"
                         title={item.destination_url}
                       >
-                        {item.destination_url.length > 155
-                          ? `${item.destination_url.substring(0, 155)}...`
+                        {item.destination_url.length > 100
+                          ? `${item.destination_url.substring(0, 100)}...`
                           : item.destination_url}
                       </span>
                       <span
