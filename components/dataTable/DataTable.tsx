@@ -123,15 +123,21 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                       className="flex items-center gap-1 hover:underline"
                     >
                       ↳
-                      <span className="hidden md:inline">
-                        {item.destination_url}
-                      </span>
                       <span
-                        className="inline md:hidden truncate max-w-[200px]"
+                        className="hidden md:inline"
                         title={item.destination_url}
                       >
-                        {item.destination_url.length > 30
-                          ? `${item.destination_url.substring(0, 30)}...`
+                        {item.destination_url.length > 155
+                          ? `${item.destination_url.substring(0, 155)}...`
+                          : item.destination_url}
+                      </span>
+                      {/* ✅ Mobile: Jika lebih dari 30 karakter, truncate */}
+                      <span
+                        className="inline md:hidden truncate max-w-[300px]"
+                        title={item.destination_url}
+                      >
+                        {item.destination_url.length > 50
+                          ? `${item.destination_url.substring(0, 50)}...`
                           : item.destination_url}
                       </span>
                       <ExternalLink className="w-4 h-4" />
