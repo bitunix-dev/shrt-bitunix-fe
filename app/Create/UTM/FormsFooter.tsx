@@ -14,7 +14,7 @@ export const FormFooter: React.FC<FormFooterProps> = ({ setOpen }) => {
         <Dialog.Close asChild>
           <Button
             onClick={() => setOpen(false)}
-            className="bg-lime-500 text-black font-bold p-5"
+            className="bg-lime-500 hover:bg-lime-600 text-black font-bold p-5"
           >
             Create
           </Button>
