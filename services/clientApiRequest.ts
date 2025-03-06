@@ -18,7 +18,7 @@ interface ApiClientParams {
         : "";
   
       // Buat URL ke API Proxy di Next.js
-      const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}proxy?endpoint=${endpoint}${queryString}`;
+      const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${endpoint}${queryString}`;
   
       console.log("Fetching:", fullUrl); // Debug URL yang digunakan
   
