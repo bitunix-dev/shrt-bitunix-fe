@@ -12,7 +12,6 @@ import {
 import { Header } from "./Header";
 import { Pagination } from "./Pagination";
 import { ModalForEditing } from "./ModalForEditing";
-import Image from "next/image";
 
 interface DataTableProps {
   BtnCreate: React.ReactNode;
