@@ -202,7 +202,11 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     className="bg-neutral-900 text-white border border-bg-neutral-800"
                   >
                     <DropdownMenuItem>QR Code</DropdownMenuItem>
-                    <DropdownMenuItem>Copy Link ID</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleCopy(item.short_link)}
+                    >
+                      Copy Link ID
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
