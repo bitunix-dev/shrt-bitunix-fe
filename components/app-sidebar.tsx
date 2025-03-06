@@ -13,7 +13,7 @@ import {
   SidebarInformation,
 } from "@/components/ui/sidebar";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
 // Menu items.
 const items = [
@@ -51,7 +51,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="bg-lime-500 text-black my-0.5 px-4 flex justify-between"
+                    className="bg-lime-500 hover:bg-lime-600 text-black my-0.5 px-4 flex justify-between"
                   >
                     <a
                       href={item.url}

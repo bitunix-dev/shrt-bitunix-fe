@@ -70,12 +70,12 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
     const faviconUrl = getFavicon(url);
 
     return (
-      <div className="w-6 h-6 flex items-center justify-center">
+      <div className="w-8 h-8 flex items-center justify-center">
         {faviconExists ? (
           <img
             src={faviconUrl}
             alt="Favicon URL"
-            className="w-6 h-6 rounded-full border-2 border-green-400 p-0.5"
+            className="w-7 h-7 rounded-full border-2 border-green-400 p-0.5"
           />
         ) : (
           <div className="w-6 h-6 rounded-full bg-green-400"></div>
@@ -121,7 +121,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                       className="text-gray-500 hover:text-white"
                       onClick={() => handleCopy(item.short_link)}
                     >
-                      <Copy className="w-4 h-4" />
+                      <Copy className="w-3 h-3" />
                     </button>
                   </div>
                   <div className="text-gray-500 text-sm w-full">
