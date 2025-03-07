@@ -3,7 +3,6 @@ import { Links } from "./dataSet/Links";
 import { RegionsTabs } from "./dataSet/Regions/RegionsTabs";
 import { DevicesAndBrowsersTab } from "./dataSet/DevicesAndBrowser/DevicesAndBrowsersTab";
 import { UTMTabs } from "./dataSet/UTMTabs/UTMTabs";
-import { useGetClicks } from "@/hooks/useGetClicksUrl";
 import { BarChart } from "lucide-react";
 
 export default function Page() {
@@ -16,7 +15,7 @@ export default function Page() {
       <div className="mt-8">
         <LineChart />
       </div>
-      <div className="grid grid-cols-2 gap-10 mt-10 mb-20">
+      <div className="grid md:grid-cols-2 gap-10 mt-10 mb-20">
         <Links />
         <RegionsTabs />
         <DevicesAndBrowsersTab />
