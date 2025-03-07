@@ -6,7 +6,7 @@ const fetchClicksContinents = async (): Promise<ApiResponse> => {
   try {
     return await clientApiRequest<ApiResponse>({
       method: "GET",
-      endpoint: "continents",
+      endpoint: "analytics/continents",
     });
   } catch (error) {
     console.error("Error fetching URLs:", error);
@@ -17,7 +17,7 @@ const fetchClicksContinents = async (): Promise<ApiResponse> => {
 // ✅ Hook React Query untuk mengambil URL + Link Preview
 export const useGetClicksContinent = () => {
   return useQuery<ApiResponse>({
-    queryKey: ["continents"], // Key unik untuk caching
+    queryKey: ["analytics/continents"], // Key unik untuk caching
     queryFn: fetchClicksContinents,
     staleTime: 1000 * 60 * 5, // Data akan dianggap fresh selama 5 menit
     refetchOnWindowFocus: false, // Tidak auto-refresh saat pindah tab

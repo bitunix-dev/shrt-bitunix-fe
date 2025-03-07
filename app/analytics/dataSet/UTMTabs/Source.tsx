@@ -1,8 +1,8 @@
 "use client";
-import { useGetClicksRegions } from "@/hooks/useGetClicksRegions";
+import { useGetClicksSource } from "@/hooks/useGetClicksSource";
 
-export const Regions = () => {
-  const { data } = useGetClicksRegions();
+export const Source = () => {
+  const { data } = useGetClicksSource();
 
   return (
     <>
@@ -11,10 +11,10 @@ export const Regions = () => {
           key={index}
           className="bg-lime-300 text-black py-1 px-2 rounded-md flex justify-between mb-2"
         >
-          <p>{item.region}</p>
+          <p>{item.source}</p>
           <span>{item.total_clicks}</span>
         </div>
-      )) || <p>No region data available</p>}
+      )) || <p>No source data available</p>}
     </>
   );
 };
