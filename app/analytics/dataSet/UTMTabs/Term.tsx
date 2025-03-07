@@ -11,7 +11,7 @@ export const Term = () => {
       {data?.data?.map((item, index) => (
         <div
           key={index}
-          className="bg-neutral-700 text-white py-2 px-3 rounded-md flex justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
+          className="bg-neutral-700 text-white py-2 px-3 rounded-md w-full flex justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
         >
           <div className="flex items-center">
             {icons.term}

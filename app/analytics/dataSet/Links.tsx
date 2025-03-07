@@ -37,7 +37,7 @@ export const Links = () => {
   return (
     <>
       <Tabs defaultValue="shortLinks">
-        <Card className="bg-neutral-800 border border-neutral-800 text-white h-max">
+        <Card className="bg-neutral-800 border border-neutral-800 text-white h-max box-border px-0">
           <CardHeader className="flex justify-between">
             <TabsList className="bg-transparent gap-2 text-black py-5">
               <TabsTrigger
@@ -59,15 +59,16 @@ export const Links = () => {
               {data?.data?.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-neutral-700 text-white py-2 px-3 rounded-md flex items-center justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
+                  className="bg-neutral-700 text-white py-2 px-3 rounded-md flex items-center mb-2 justify-between box-border transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center w-[60%]">
                     <FaviconWithFallback url={item.destination_url} />
-                    <p>{item.short_link}</p>
+                    <p className="overflow-hidden">{item.short_link}</p>
                   </div>
-                  <span className="font-bold">
-                    {Number(item.clicks).toLocaleString("en-US")} clicks
-                  </span>
+                  <div className="font-bold flex gap-2 text-xs md:text-base">
+                    {Number(item.clicks).toLocaleString("en-US")}
+                    <p>clicks</p>
+                  </div>
                 </div>
               )) || <p>No short links available</p>}
             </CardContent>
