@@ -83,17 +83,17 @@ export const LineChart = () => {
               dataKey="hour"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(11, 16)}
+              tickMargin={5}
+              tickFormatter={(value) => value.slice(16, 30)}
             />
             <YAxis
-              allowDecimals={false}
-              tickLine={false}
+              allowDecimals={true}
+              tickLine={true}
               axisLine={false}
               tickMargin={8}
             />
             <ChartTooltip
-              cursor={false}
+              cursor={true}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Area
