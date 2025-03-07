@@ -53,14 +53,15 @@ export const LineChart = () => {
   const chartData =
     data?.data?.clicks?.map((item: dataChart) => ({
       hour: formatDate(item.hour),
-      clicks: item.clicks,
+      clicks: Number(item.clicks).toLocaleString("en-US"),
     })) || [];
 
   return (
     <Card className="bg-neutral-800 border border-neutral-800 text-white h-[500px]">
       <CardHeader>
         <CardTitle className="text-white text-3xl font-bold">
-          {data?.data?.total_clicks ?? 0} Total Clicks
+          {Number(data?.data?.total_clicks ?? 0).toLocaleString("en-US")} Total
+          Clicks
         </CardTitle>
         <CardDescription>
           Total number of clicks recorded within the selected timeframe.
