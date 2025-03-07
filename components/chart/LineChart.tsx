@@ -77,7 +77,7 @@ export const LineChart = () => {
               right: 12,
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} strokeDasharray="6 6" />
             <XAxis
               color=""
               dataKey="hour"
