@@ -8,19 +8,31 @@ import { Continents } from "./Continents";
 export const RegionsTabs = () => {
   return (
     <Tabs defaultValue="country">
-      <Card className="bg-neutral-800 border border-neutral-800 text-white h-72">
+      <Card className="bg-neutral-800 border border-neutral-800 text-white h-max">
         <CardHeader>
-          <TabsList className="bg-lime-500 text-white">
-            <TabsTrigger className="bg-lime-500" value="country">
+          <TabsList className="bg-transparent gap-2 text-black py-5">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="country"
+            >
               Country
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="city">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="city"
+            >
               City
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="region">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="region"
+            >
               Region
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="continent">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="continent"
+            >
               Continent
             </TabsTrigger>
           </TabsList>

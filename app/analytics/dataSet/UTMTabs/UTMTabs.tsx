@@ -9,22 +9,37 @@ import { Content } from "./Content";
 export const UTMTabs = () => {
   return (
     <Tabs defaultValue="source">
-      <Card className="bg-neutral-800 border border-neutral-800 text-white h-72">
+      <Card className="bg-neutral-800 border border-neutral-800 text-white h-max">
         <CardHeader>
-          <TabsList className="bg-lime-500 text-white">
-            <TabsTrigger className="bg-lime-500" value="source">
+          <TabsList className="bg-transparent gap-2 text-black py-5">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="source"
+            >
               Source
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="medium">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="medium"
+            >
               Medium
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="campaign">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="campaign"
+            >
               Campaign
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="term">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="term"
+            >
               Term
             </TabsTrigger>
-            <TabsTrigger className="bg-lime-500" value="content">
+            <TabsTrigger
+              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              value="content"
+            >
               Content
             </TabsTrigger>
           </TabsList>
