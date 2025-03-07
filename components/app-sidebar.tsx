@@ -26,7 +26,7 @@ const items = [
     title: "Analytics",
     url: "/analytics",
     icon: BarChart,
-    comingSoon: true,
+    comingSoon: false,
   },
 ];
 
