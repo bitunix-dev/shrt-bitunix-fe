@@ -4,11 +4,15 @@ import { RegionsTabs } from "./dataSet/Regions/RegionsTabs";
 import { DevicesAndBrowsersTab } from "./dataSet/DevicesAndBrowser/DevicesAndBrowsersTab";
 import { UTMTabs } from "./dataSet/UTMTabs/UTMTabs";
 import { useGetClicks } from "@/hooks/useGetClicksUrl";
+import { BarChart } from "lucide-react";
 
 export default function Page() {
   return (
     <>
-      <h1 className="text-2xl font-bold text-lime-500">Analytics</h1>
+      <div className="flex items-center gap-2">
+        <BarChart className="w-6 h-6 text-lime-500" />
+        <h1 className="text-2xl font-bold text-lime-500">Analytics</h1>
+      </div>
       <div className="mt-8">
         <LineChart />
       </div>

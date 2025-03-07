@@ -1,4 +1,4 @@
-import { Link, BarChart } from "lucide-react";
+import { Globe, BarChart } from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -20,7 +20,7 @@ const items = [
   {
     title: "Links",
     url: "/",
-    icon: Link,
+    icon: Globe,
   },
   {
     title: "Analytics",

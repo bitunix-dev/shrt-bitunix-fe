@@ -59,14 +59,13 @@ export const LineChart = () => {
   return (
     <Card className="bg-neutral-800 border border-neutral-800 text-white h-[500px]">
       <CardHeader>
-        <CardTitle>Total Clicks</CardTitle>
+        <CardTitle className="text-white text-3xl font-bold">
+          {data?.data?.total_clicks ?? 0} Total Clicks
+        </CardTitle>
         <CardDescription>
           Total number of clicks recorded within the selected timeframe.
         </CardDescription>
       </CardHeader>
-      <CardContent className="text-white text-3xl font-bold">
-        {data?.data?.total_clicks ?? 0} Clicks
-      </CardContent>
       <CardContent className="text-black">
         <ChartContainer className="h-[370px] w-full" config={chartConfig}>
           <AreaChart

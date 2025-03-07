@@ -31,7 +31,9 @@ const Modal: React.FC<ModalProps> = ({
     <Dialog.Trigger asChild>{BtnCreate}</Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className={`${styles.Overlay} ${zIndex}`} />
-      <Dialog.Content className={`${styles.Content} ${width} md:overflow-hidden overflow-y-scroll`}>
+      <Dialog.Content
+        className={`${styles.Content} ${width} md:overflow-hidden overflow-y-scroll`}
+      >
         <Dialog.Title className={styles.Title}>{ModalTitle}</Dialog.Title>
         <Dialog.Description className={styles.Description}>
           {ModalDescription}
@@ -41,10 +43,10 @@ const Modal: React.FC<ModalProps> = ({
         <Dialog.Close asChild>
           <button
             onClick={() => setOpen(false)}
-            className={styles.IconButton}
+            className={`${styles.IconButton} bg-lime-200 hover:bg-lime-300`}
             aria-label="Close"
           >
-            <Cross2Icon />
+            <Cross2Icon className="text-lime-700 hover:text-lime-500" />
           </button>
         </Dialog.Close>
       </Dialog.Content>
