@@ -3,9 +3,10 @@ import { useEffect } from "react";
 
 interface BtnCreateProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: () => void; // ✅ Tambahkan prop untuk refetch
 }
 
-export const BtnCreate: React.FC<BtnCreateProps> = ({ setOpen }) => {
+export const BtnCreate: React.FC<BtnCreateProps> = ({ setOpen, refetch }) => {
   const handleClick = () => {
     setOpen(true);
   };

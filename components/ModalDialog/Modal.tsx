@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({
     <Dialog.Portal>
       <Dialog.Overlay className={`${styles.Overlay} ${zIndex}`} />
       <Dialog.Content
-        className={`${styles.Content} ${width} md:overflow-hidden overflow-y-scroll`}
+        className={`${styles.Content} ${width} md:overflow-y-auto overflow-y-scroll`}
       >
         <Dialog.Title className={styles.Title}>{ModalTitle}</Dialog.Title>
         <Dialog.Description className={styles.Description}>

@@ -8,7 +8,12 @@ import {
   Gift,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { ComboBoxComponents } from "@/components/Combobox/ComboboxComponen";
 import { useEffect } from "react";
+interface Option {
+  id: string;
+  name: string;
+}
 
 interface FormsProps {
   source: string;
@@ -25,13 +30,13 @@ interface FormsProps {
   setReferral: React.Dispatch<React.SetStateAction<string>>;
   destinationUrl: string;
   setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
+  sourceOptions: Option[]; // ✅ fix di sini
+  mediumOptions: Option[]; // ✅ fix di sini
 }
-
-// ✅ Fungsi untuk mengganti spasi dengan dash (-)
 const normalizeText = (text: string) =>
   text.trim().toLowerCase().replace(/\s+/g, "-");
 
-export const Forms: React.FC<FormsProps> = ({
+export const FormsUTM: React.FC<FormsProps> = ({
   source,
   setSource,
   medium,
@@ -46,10 +51,13 @@ export const Forms: React.FC<FormsProps> = ({
   setReferral,
   destinationUrl,
   setDestinationUrl,
+  sourceOptions,
+  mediumOptions,
 }) => {
   useEffect(() => {
+    if (!destinationUrl) return;
     try {
-      const url = new URL(destinationUrl.split("?")[0]); // Hapus query params lama
+      const url = new URL(destinationUrl.split("?")[0]);
       const params = new URLSearchParams();
 
       if (source) params.set("utm_source", normalizeText(source));
@@ -72,24 +80,6 @@ export const Forms: React.FC<FormsProps> = ({
   }, [source, medium, campaign, term, content, referral]);
 
   const dataSet = [
-    {
-      id: "source",
-      label: "Source",
-      icon: <Globe className="w-4 h-4" />,
-      placeholder: "google",
-      tooltip: "where the traffic is coming from",
-      value: source,
-      setValue: setSource,
-    },
-    {
-      id: "medium",
-      label: "Medium",
-      icon: <RadioTower className="w-4 h-4" />,
-      placeholder: "cpc",
-      tooltip: "how the traffic is coming",
-      value: medium,
-      setValue: setMedium,
-    },
     {
       id: "campaign",
       label: "Campaign",
@@ -131,29 +121,42 @@ export const Forms: React.FC<FormsProps> = ({
   return (
     <>
       <div className="space-y-3">
+        {/* Source */}
+        <ComboBoxComponents
+          data={sourceOptions}
+          selectedData={source}
+          setSelectedData={setSource}
+          icon={<Globe className="w-4 h-4" />}
+          label="Source"
+        />
+        {/* Medium */}
+        <ComboBoxComponents
+          data={mediumOptions}
+          selectedData={medium}
+          setSelectedData={setMedium}
+          icon={<RadioTower className="w-4 h-4" />} // 🔁 pakai icon yang beda dari source
+          label="Medium"
+        />
+
+        {/* Other fields */}
         {dataSet.map((item) => (
           <div key={item.id} className="flex">
             <TooltipComponents
               Label={
-                <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-neutral-900">
+                <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-r-0">
                   {item.icon} {item.label}
                 </div>
               }
               content={`Enter ${item.tooltip.toLowerCase()}`}
             />
             <Input
-              className="rounded-l-none border border-neutral-800"
+              className="rounded-l-none border-l-0 border-y-1"
               placeholder={item.placeholder}
               value={item.value}
               onChange={(e) => item.setValue(e.target.value)}
-              autoFocus
             />
           </div>
         ))}
-      </div>
-      <div className="mt-5">
-        <h4>Link preview:</h4>
-        <Input value={destinationUrl} disabled></Input>
       </div>
     </>
   );

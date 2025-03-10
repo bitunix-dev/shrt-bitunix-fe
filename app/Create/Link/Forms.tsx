@@ -1,9 +1,16 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ComboboxForLink } from "@/components/Combobox/ComboboxForLink";
-import { ComboBoxForTags } from "@/components/Combobox/ComboboxForTags";
 import React, { useEffect, useState } from "react";
 import QRCodeGenerator from "@/components/qrCode/QrCode";
+import { FormsUTM } from "../UTM/Forms";
+import { ComboBoxForTags } from "@/components/Combobox/ComboboxForTags";
+import { Tags } from "lucide-react";
+
+interface Option {
+  id: string;
+  name: string;
+}
 
 interface FormsProps {
   dataTags: any;
@@ -13,6 +20,20 @@ interface FormsProps {
   setShortLink: React.Dispatch<React.SetStateAction<string>>;
   shortLink: string;
   destinationUrl: string;
+  source: string;
+  setSource: React.Dispatch<React.SetStateAction<string>>;
+  medium: string;
+  setMedium: React.Dispatch<React.SetStateAction<string>>;
+  campaign: string;
+  setCampaign: React.Dispatch<React.SetStateAction<string>>;
+  term: string;
+  setTerm: React.Dispatch<React.SetStateAction<string>>;
+  content: string;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
+  referral: string;
+  setReferral: React.Dispatch<React.SetStateAction<string>>;
+  sourceOptions: { id: string; name: string }[];
+  mediumOptions: { id: string; name: string }[];
 }
 
 export const Forms: React.FC<FormsProps> = ({
@@ -23,6 +44,20 @@ export const Forms: React.FC<FormsProps> = ({
   setShortLink,
   shortLink,
   destinationUrl,
+  source,
+  setSource,
+  medium,
+  setMedium,
+  campaign,
+  setCampaign,
+  term,
+  setTerm,
+  content,
+  setContent,
+  referral,
+  setReferral,
+  sourceOptions,
+  mediumOptions
 }) => {
   const [isCustomShortLink, setIsCustomShortLink] = useState(false);
 
@@ -83,8 +118,28 @@ export const Forms: React.FC<FormsProps> = ({
             setSelectedTags={setTags}
             selectedTags={tags}
           />
+          <Label className="mt-5 mb-3">UTM</Label>
+          <div className="mt-3">
+            <FormsUTM
+              source={source}
+              setSource={setSource}
+              medium={medium}
+              setMedium={setMedium}
+              campaign={campaign}
+              setCampaign={setCampaign}
+              term={term}
+              setTerm={setTerm}
+              content={content}
+              setContent={setContent}
+              referral={referral}
+              setReferral={setReferral}
+              destinationUrl={destinationUrl}
+              setDestinationUrl={setDestinationUrl}
+              sourceOptions={sourceOptions}
+              mediumOptions={mediumOptions} />
+          </div>
         </div>
-        <div className="bg-neutral-900 text-white font-bold p-3 border border-neutral-900 rounded-md">
+        <div className="bg-neutral-900 text-white font-bold p-3 pb-5 border h-max border-neutral-900 rounded-md">
           <h2 className="text-center">QR CODE</h2>
           <div
             className="relative mt-2 py-1 rounded-md flex items-center justify-center border border-neutral-900"

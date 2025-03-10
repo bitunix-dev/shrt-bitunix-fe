@@ -3,9 +3,11 @@
 import Modal from "@/components/ModalDialog/Modal";
 import { Forms } from "./Forms";
 import { BtnCreate } from "./BtnCreate";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FormFooter } from "./FormsFooter";
 import { useGetTags } from "@/hooks/useGetTags";
+import { useGetSources } from "@/hooks/useGetSource";
+import { useGetMediums } from "@/hooks/useGetMedium";
 
 interface CreateProps {
     refetch: () => void; // ✅ Tambahkan prop untuk refetch
@@ -14,6 +16,7 @@ interface CreateProps {
 export const Create: React.FC<CreateProps> = ({
     refetch
 }) => {
+    const [data, setData] = useState<any>([])
     const [open, setOpen] = useState(false);
     const [destinationUrl, setDestinationUrl] = useState<string>('')
     const [tags, setTags] = useState<[]>([])
@@ -24,8 +27,33 @@ export const Create: React.FC<CreateProps> = ({
     const [term, setTerm] = useState<string>("")
     const [content, setContent] = useState<string>("")
     const [referral, setReferral] = useState<string>("")
+    const [dataSource, setDataSource] = useState<any>([])
+    const [dataMedium, setDataMedium] = useState<any>([])
+    const { data: tagsData, refetch: refetchTags } = useGetTags();
+    const { data: sourceData, refetch: refetchSources } = useGetSources();
+    const { data: mediumData, refetch: refetchMediums } = useGetMediums();
 
-    const { data } = useGetTags()
+    useEffect(() => {
+        if (tagsData) setData(tagsData);
+    }, [tagsData]);
+
+    useEffect(() => {
+        if (sourceData) setDataSource(sourceData);
+    }, [sourceData]);
+
+    useEffect(() => {
+        if (mediumData) setDataMedium(mediumData);
+    }, [mediumData]);
+
+    const refetchAllData = async () => {
+        await Promise.all([refetchTags(), refetchSources(), refetchMediums()]);
+    };
+
+    useEffect(() => {
+        if (open) {
+            refetchAllData();
+        }
+    }, [open]);
 
     const dataBody = {
         "destination_url": destinationUrl,
@@ -50,8 +78,21 @@ export const Create: React.FC<CreateProps> = ({
                     setShortLink={setShortLink}
                     shortLink={shortLink}
                     destinationUrl={destinationUrl}
-                />}
-                BtnCreate={<BtnCreate setOpen={setOpen} />}
+                    source={source}
+                    setSource={setSource}
+                    medium={medium}
+                    setMedium={setMedium}
+                    campaign={campaign}
+                    setCampaign={setCampaign}
+                    term={term}
+                    setTerm={setTerm}
+                    content={content}
+                    setContent={setContent}
+                    referral={referral}
+                    setReferral={setReferral}
+                    sourceOptions={dataSource?.data}
+                    mediumOptions={dataMedium?.data} />}
+                BtnCreate={<BtnCreate setOpen={setOpen} refetch={data.refetch} />}
                 setOpen={setOpen}
                 open={open}
                 zIndex={"z-10"}
@@ -62,21 +103,6 @@ export const Create: React.FC<CreateProps> = ({
                     dataBody={dataBody}
                     refetch={refetch}
                     setOpen={setOpen}
-                    setDestinasionUrl={setDestinationUrl}
-                    destinasiUrl={destinationUrl} 
-                    open={false} 
-                    source={source} 
-                    setSource={setSource} 
-                    medium={medium} 
-                    setMedium={setMedium} 
-                    campaign={campaign} 
-                    setCampaign={setCampaign} 
-                    term={term} 
-                    setTerm={setTerm} 
-                    content={content} 
-                    setContent={setContent} 
-                    referral={referral} 
-                    setReferral={setReferral} 
                 />}
             />
         </>
