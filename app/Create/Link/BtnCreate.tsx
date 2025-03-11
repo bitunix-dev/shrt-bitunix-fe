@@ -32,7 +32,7 @@ export const BtnCreate: React.FC<BtnCreateProps> = ({ setOpen, refetch }) => {
         onClick={handleClick}
       >
         Create Link
-        <span className="bg-lime-700 hover:bg-[var(--bitunix-hover)] p-1 rounded-sm text-black text-xs font-bold">
+        <span className="bg-lime-500 hover:bg-[var(--bitunix-hover)] p-1 rounded-sm text-black text-sm font-bold">
           C
         </span>
       </Button>
