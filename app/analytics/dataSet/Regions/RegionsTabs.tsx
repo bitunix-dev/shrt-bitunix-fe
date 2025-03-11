@@ -12,25 +12,25 @@ export const RegionsTabs = () => {
         <CardHeader className="h-20 xl:h-10 mb-5">
           <TabsList className="bg-transparent gap-2 text-black py-5 grid grid-cols-3 lg:grid-cols-4">
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="country"
             >
               Country
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="city"
             >
               City
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="region"
             >
               Region
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="continent"
             >
               Continent

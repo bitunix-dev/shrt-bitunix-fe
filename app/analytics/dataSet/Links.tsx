@@ -41,13 +41,13 @@ export const Links = () => {
           <CardHeader className="flex justify-between">
             <TabsList className="bg-transparent gap-2 text-black py-5">
               <TabsTrigger
-                className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+                className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
                 value="shortLinks"
               >
                 Short links
               </TabsTrigger>
               <TabsTrigger
-                className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+                className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
                 value="destinationUrl"
               >
                 Destination URL

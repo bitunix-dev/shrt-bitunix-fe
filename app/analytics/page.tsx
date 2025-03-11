@@ -9,8 +9,8 @@ export default function Page() {
   return (
     <>
       <div className="flex items-center gap-2">
-        <BarChart className="w-6 h-6 text-lime-500" />
-        <h1 className="text-2xl font-bold text-lime-500">Analytics</h1>
+        <BarChart className="w-6 h-6 text-[var(--bitunix)]" />
+        <h1 className="text-2xl font-bold text-[var(--bitunix)]">Analytics</h1>
       </div>
       <div className="mt-8">
         <LineChart />

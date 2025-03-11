@@ -28,11 +28,11 @@ export const BtnCreate: React.FC<BtnCreateProps> = ({ setOpen, refetch }) => {
   return (
     <>
       <Button
-        className="bg-lime-500 text-black hover:bg-lime-600 flex items-center gap-2"
+        className="bg-[var(--bitunix)] text-black hover:bg-[var(--bitunix-hover)] flex items-center gap-2"
         onClick={handleClick}
       >
         Create Link
-        <span className="bg-lime-700 hover:bg-lime-800 p-1 rounded-sm text-black text-xs font-bold">
+        <span className="bg-lime-700 hover:bg-[var(--bitunix-hover)] p-1 rounded-sm text-black text-xs font-bold">
           C
         </span>
       </Button>

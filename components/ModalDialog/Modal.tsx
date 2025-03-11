@@ -43,10 +43,10 @@ const Modal: React.FC<ModalProps> = ({
         <Dialog.Close asChild>
           <button
             onClick={() => setOpen(false)}
-            className={`${styles.IconButton} bg-lime-200 hover:bg-lime-300`}
+            className={`${styles.IconButton} bg-lime-200 hover:bg-[var(--bitunix-hover)]`}
             aria-label="Close"
           >
-            <Cross2Icon className="text-lime-700 hover:text-lime-500" />
+            <Cross2Icon className="text-lime-700 hover:text-[var(--bitunix-hover)]" />
           </button>
         </Dialog.Close>
       </Dialog.Content>

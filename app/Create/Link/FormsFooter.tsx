@@ -35,7 +35,7 @@ export const FormFooter: React.FC<FormFooterProps> = ({
         <Dialog.Close asChild>
           <Button
             onClick={() => handleClick()}
-            className="bg-lime-500 hover:bg-lime-600 text-black font-bold p-5"
+            className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-bold p-5"
           >
             Create
           </Button>

@@ -163,7 +163,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                       .map((tag: { id: number; name: string }) => (
                         <span
                           key={tag.id}
-                          className="px-2 py-1 text-xs font-medium text-black bg-lime-500 rounded-md"
+                          className="px-2 py-1 text-xs font-medium text-black bg-[var(--bitunix)] rounded-md"
                         >
                           {tag.name}
                         </span>

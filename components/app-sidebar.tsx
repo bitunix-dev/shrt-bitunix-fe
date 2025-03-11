@@ -51,7 +51,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className="bg-lime-500 hover:bg-lime-600 text-black my-0.5 px-4 flex justify-between"
+                    className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black my-0.5 px-4 flex justify-between"
                   >
                     <a
                       href={item.url}

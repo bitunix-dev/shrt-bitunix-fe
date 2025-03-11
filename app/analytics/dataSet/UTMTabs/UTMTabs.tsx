@@ -14,31 +14,31 @@ export const UTMTabs = () => {
           {/* TabsList sekarang akan wrap ke bawah jika layar mengecil */}
           <TabsList className="bg-transparent gap-2 text-black py-5 grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="source"
             >
               Source
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="medium"
             >
               Medium
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="campaign"
             >
               Campaign
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="term"
             >
               Term
             </TabsTrigger>
             <TabsTrigger
-              className="bg-lime-500 hover:bg-lime-600 py-2 px-4"
+              className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] py-2 px-4"
               value="content"
             >
               Content

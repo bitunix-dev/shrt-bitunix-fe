@@ -49,6 +49,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --primary-bitunix: var(--bitunix);
 }
 
 :root {
@@ -86,6 +87,8 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --chart-1: 83.7 80.5% 44.3%;
+  --bitunix: oklch(0.9 0.2094 126.85);
+  --bitunix-hover: oklch(0.8 0.2094 126.85);
 }
 
 .dark {
