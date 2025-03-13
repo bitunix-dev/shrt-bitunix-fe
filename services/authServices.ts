@@ -1,5 +1,4 @@
 import axios from "axios";
-import { clientApiRequest } from "./clientApiRequest";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
