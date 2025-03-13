@@ -1,38 +1,34 @@
-'use client'
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { login } from "@/services/authServices"
-import { useState } from "react"
-import { useRouter } from "next/navigation" // Mengubah import dari next/router menjadi next/navigation
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { login } from "@/services/authServices";
+import { useState } from "react";
+import { useRouter } from "next/navigation"; // Mengubah import dari next/router menjadi next/navigation
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const router = useRouter()
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const router = useRouter();
 
   const handleClick = async () => {
     try {
-      const response = await login(
-        email,
-        password
-      )
+      const response = await login(email, password);
 
-      console.log(response)
+      console.log(response);
 
-      if(response.status === 200){
-        router.push('/')
+      if (response.status === 200) {
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
@@ -45,7 +41,13 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input onChange={(e) => setEmail(e.target.value)} id="email" type="email" placeholder="m@example.com" required />
+          <Input
+            onChange={(e) => setEmail(e.target.value)}
+            id="email"
+            type="email"
+            placeholder="johndoe@mail.com"
+            required
+          />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -57,9 +59,18 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input onChange={(e) => setPassword(e.target.value)} id="password" type="password" required />
+          <Input
+            onChange={(e) => setPassword(e.target.value)}
+            id="password"
+            type="password"
+            required
+          />
         </div>
-        <Button type="button" onClick={() => void handleClick()} className="w-full text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]">
+        <Button
+          type="button"
+          onClick={() => void handleClick()}
+          className="w-full text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]"
+        >
           Login
         </Button>
       </div>
@@ -70,5 +81,5 @@ export function LoginForm({
         </a>
       </div>
     </form>
-  )
+  );
 }
