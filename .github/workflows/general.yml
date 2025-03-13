@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          # cp .env.development .env
+          cp .env.development .env
           npm install --legacy-peer-deps
 
       - name: Build Project
