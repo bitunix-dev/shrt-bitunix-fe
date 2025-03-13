@@ -1,5 +1,10 @@
+'use client'
+
 import { Globe, BarChart } from "lucide-react";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { logout } from "@/services/authServices";
+import { BtnLogout } from "./BtnLogout";
 
 import {
   Sidebar,
@@ -11,6 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarInformation,
+  SidebarFooter
 } from "@/components/ui/sidebar";
 
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +37,7 @@ const items = [
 ];
 
 export function AppSidebar() {
+
   return (
     <Sidebar className="text-white">
       <SidebarContent className="bg-neutral-950 text-white">
@@ -73,6 +80,10 @@ export function AppSidebar() {
         </SidebarGroup>
         <SidebarInformation />
       </SidebarContent>
+      <SidebarFooter className="bg-neutral-950">
+        {/* <Button onClick={() => handleLogout()} variant={'destructive'} className="">Log Out</Button> */}
+        <BtnLogout/>
+      </SidebarFooter>
     </Sidebar>
   );
 }
