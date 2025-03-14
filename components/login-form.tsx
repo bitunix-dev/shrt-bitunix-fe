@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/services/authServices";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // Mengubah import dari next/router menjadi next/navigation
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -15,23 +15,38 @@ export function LoginForm({
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const handleClick = async () => {
-    // Validate email domain
+  // Validate email function
+  const validateEmail = (email: string): boolean => {
+    if (!email) return false;
+    
     const emailDomain = email.split("@")[1];
-    if (emailDomain !== "bitunix.io" && emailDomain !== "bitunix.com") {
-      setEmailError(
-        "Please enter an email with @bitunix.io or @bitunix.com domain."
-      );
-      return;
-    }
-    setEmailError(""); // Clear error if email is valid
+    return emailDomain === "bitunix.io" || emailDomain === "bitunix.com";
+  };
 
+  // Check form validity whenever inputs change
+  useEffect(() => {
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = password.length > 0;
+    
+    setIsFormValid(isEmailValid && isPasswordValid);
+    
+    // Update email error message
+    if (email && !isEmailValid) {
+      setEmailError("Please enter an email with @bitunix.io or @bitunix.com domain.");
+    } else {
+      setEmailError("");
+    }
+  }, [email, password]);
+
+  const handleClick = async () => {
+    if (!isFormValid) return;
+    
     try {
       const response = await login(email, password);
-
 
       if (response.status === 200) {
         router.push("/");
@@ -57,8 +72,7 @@ export function LoginForm({
             className="text-md p-5"
             required
           />
-          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}{" "}
-          {/* Display error message */}
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -82,7 +96,8 @@ export function LoginForm({
         <Button
           type="button"
           onClick={() => void handleClick()}
-          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] mt-3"
+          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] mt-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!isFormValid}
         >
           Login
         </Button>

@@ -21,21 +21,21 @@ export default function LoginPage() {
             <br />
             Automatic UTM Generator
           </h1>
-          <p
-            className="text-md"
-            style={{ color: "rgb(153, 153, 153)", fontWeight: "bold" }}
-          >
-            Bitunix-shorten simplifies your marketing campaigns
-            <br /> with URL shortening & automatic UTM generation. <br />
-            Track clicks, create QR codes, and optimize conversions
-            effortlessly.
-          </p>
-        </div>
-        <img
-          src="https://static.bitunix.com/web/bitunix-assets/d4dcce.CePIhzzp.webp"
-          alt="Image"
-          className="h-150 w-150 object-contain dark:brightness-[0.2] dark:grayscale mt-3" // Memperkecil gambar
-        />
+            <p
+              className="text-md"
+              style={{ color: "rgb(153, 153, 153)", fontWeight: "bold" }}
+            >
+              Bitunix-shorten simplifies your marketing campaigns
+              <br /> with URL shortening & automatic UTM generation. <br />
+              Track clicks, create QR codes, and optimize conversions
+              effortlessly.
+            </p>
+          </div>
+          <img
+            src="https://static.bitunix.com/web/bitunix-assets/d4dcce.CePIhzzp.webp"
+            alt="Image"
+            className="h-100 w-100 object-contain dark:brightness-[0.2] dark:grayscale mt-3" // Memperkecil gambar
+          />
       </div>
 
       {/* Right side with login form */}

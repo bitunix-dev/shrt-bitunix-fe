@@ -34,7 +34,7 @@ export default function LoginPage() {
         <img
           src="https://static.bitunix.com/web/bitunix-assets/d4dcce.CePIhzzp.webp"
           alt="Image"
-          className="h-150 w-150 object-contain dark:brightness-[0.2] dark:grayscale mt-3" // Memperkecil gambar
+          className="h-100 w-100 object-contain dark:brightness-[0.2] dark:grayscale mt-3" // Memperkecil gambar
         />
       </div>
 

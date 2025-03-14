@@ -25,16 +25,30 @@ export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
   // Initialize state variables
   const [userName, setUserName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Access localStorage safely in useEffect after component is mounted
+  // Fetch user data from API only
   useEffect(() => {
-    // This only runs in the browser, after the component mounts
-    const storedUserName = localStorage.getItem("userName") || "";
-    const storedAvatar = localStorage.getItem("avatar") || "";
-    
-    setUserName(storedUserName);
-    setAvatar(storedAvatar);
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        // Get user data from API
+        const response = await fetch('/api/auth/user');
+        const data = await response.json();
+        
+        // Set user data from API
+        setUserName(data.userName || '');
+        setAvatar(data.avatar || '');
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (showSidebar) {
+      fetchUserData();
+    }
+  }, [showSidebar]);
 
   return (
     <>
@@ -47,11 +61,17 @@ export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
                 <div className="flex items-center justify-between w-full gap-2 px-4">
                   <SidebarTrigger className="text-white" />
                   <div className="flex items-center gap-3">
-                    <p className="text-white">Hi {userName}</p>
-                    <Avatar>
-                      <AvatarImage src={avatar} alt="avatar" />
-                      <AvatarFallback>AV</AvatarFallback>
-                    </Avatar>
+                    {isLoading ? (
+                      <p className="text-white">Loading...</p>
+                    ) : (
+                      <>
+                        <p className="text-white">Hi {userName || 'Guest'}</p>
+                        <Avatar>
+                          <AvatarImage src={avatar} alt="avatar" />
+                          <AvatarFallback>{userName ? userName.charAt(0).toUpperCase() : 'G'}</AvatarFallback>
+                        </Avatar>
+                      </>
+                    )}
                   </div>
                 </div>
               </header>
