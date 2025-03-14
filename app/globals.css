@@ -10,6 +10,24 @@
 @import "@radix-ui/colors/gray.css";
 @import "@radix-ui/colors/violet.css";
 
+@font-face {
+  font-family: 'HarmonyOS Sans';
+  src: url('/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Regular.woff') format('woff'),
+       url('/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans';
+  src: url('/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Bold.woff') format('woff'),
+       url('/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+body {
+  font-family: 'HarmonyOS Sans', sans-serif;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
