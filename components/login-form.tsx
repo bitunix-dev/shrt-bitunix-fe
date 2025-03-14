@@ -32,7 +32,6 @@ export function LoginForm({
     try {
       const response = await login(email, password);
 
-      console.log(response);
 
       if (response.status === 200) {
         router.push("/");
@@ -83,7 +82,7 @@ export function LoginForm({
         <Button
           type="button"
           onClick={() => void handleClick()}
-          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]"
+          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] mt-3"
         >
           Login
         </Button>

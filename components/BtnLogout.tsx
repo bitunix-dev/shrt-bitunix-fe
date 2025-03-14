@@ -20,6 +20,8 @@ export function BtnLogout() {
   const handleLogout = async () => {
     try {
       await logout();
+      localStorage.removeItem('userName')
+      localStorage.removeItem('avatar')
       router.push("/login");
     } catch (error) {
       console.log(error);

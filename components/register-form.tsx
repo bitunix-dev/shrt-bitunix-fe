@@ -98,7 +98,7 @@ export function RegisterForm({
         </div>
         <Button
           type="submit"
-          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]"
+          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] mt-3"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Registering..." : "Register"}
