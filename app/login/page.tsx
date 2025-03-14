@@ -17,11 +17,16 @@ export default function LoginPage() {
       >
         <div className="text-white">
           <h1 className="text-4xl font-semibold mb-2">
-            The crypto derivatives exchange
+            URL Shortener with
             <br />
-            with expertise
+            Automatic UTM Generator
           </h1>
-          <p className="text-lg">Better Liquidity, Better Trading</p>
+          <p className="text-lg">
+            Bitunix-shorten simplifies your marketing campaigns
+            <br /> with URL shortening & automatic UTM generation. <br />
+            Track clicks, create QR codes, and optimize conversions
+            effortlessly.
+          </p>
         </div>
         <img
           src="https://static.bitunix.com/web/bitunix-assets/d4dcce.CePIhzzp.webp"

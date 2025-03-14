@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ClientLayouts } from "./clientLayouts";
 import { Toaster } from "react-hot-toast";
@@ -13,7 +14,71 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
+const harmonyOS = localFont({
+  src: [
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Regular.woff",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Bold.woff",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Regular_Italic.woff",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Bold_Italic.woff",
+      weight: "700",
+      style: "italic",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Thin.woff",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Thin_Italic.woff",
+      weight: "100",
+      style: "italic",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Light.woff",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Light_Italic.woff",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Medium.woff",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Medium_Italic.woff",
+      weight: "500",
+      style: "italic",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Black.woff",
+      weight: "900",
+      style: "normal",
+    },
+    {
+      path: "/fonts/harmonyos-sans-webfont/HarmonyOS_Sans_Black_Italic.woff",
+      weight: "900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-harmony-os", // Define a CSS variable for HarmonyOS
+});
 export const metadata: Metadata = {
   title: "Bitunix-shorten | URL Shortener with Automatic UTM Generator",
   description:
@@ -120,9 +185,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-neutral-900 antialiased`}
-      >
+      <body className={`${harmonyOS.variable} bg-neutral-900 antialiased`}>
         <Toaster />
         <ClientLayouts>{children}</ClientLayouts>
       </body>
