@@ -17,6 +17,7 @@ export function RegisterForm({
   const [password_confirmation, setPassword_confirmation] =
     useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<string>("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,6 +25,18 @@ export function RegisterForm({
 
     if (isSubmitting) return;
     setIsSubmitting(true);
+
+    // Validate email domain
+    const emailDomain = email.split("@")[1];
+    if (emailDomain !== "bitunix.io" && emailDomain !== "bitunix.com") {
+      setEmailError(
+        "Please enter an email with @bitunix.io or @bitunix.com domain."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    setEmailError(""); // Clear error if valid email
 
     try {
       const response = await register(email, password, password_confirmation);
@@ -58,6 +71,8 @@ export function RegisterForm({
             className="text-md p-5"
             required
           />
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}{" "}
+          {/* Display error message */}
         </div>
         <div className="grid gap-3">
           <Label htmlFor="password">Password</Label>

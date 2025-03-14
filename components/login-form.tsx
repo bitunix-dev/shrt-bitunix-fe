@@ -14,9 +14,21 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+
   const router = useRouter();
 
   const handleClick = async () => {
+    // Validate email domain
+    const emailDomain = email.split("@")[1];
+    if (emailDomain !== "bitunix.io" && emailDomain !== "bitunix.com") {
+      setEmailError(
+        "Please enter an email with @bitunix.io or @bitunix.com domain."
+      );
+      return;
+    }
+    setEmailError(""); // Clear error if email is valid
+
     try {
       const response = await login(email, password);
 
@@ -46,6 +58,8 @@ export function LoginForm({
             className="text-md p-5"
             required
           />
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}{" "}
+          {/* Display error message */}
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
