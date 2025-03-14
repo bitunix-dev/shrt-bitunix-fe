@@ -44,11 +44,8 @@ export function RegisterForm({
       {...props}
       onSubmit={handleSubmit} // Menambahkan onSubmit handler
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create your account</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Enter your details below to create a new account
-        </p>
+      <div className="flex flex-col items-start gap-2 text-left">
+        <h1 className="text-3xl font-bold">Create your account</h1>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">
@@ -57,7 +54,8 @@ export function RegisterForm({
             onChange={(e) => setEmail(e.target.value)}
             id="email"
             type="email"
-            placeholder="johndoe@mail.com"
+            placeholder="Enter your email address"
+            className="text-md p-5"
             required
           />
         </div>
@@ -67,6 +65,8 @@ export function RegisterForm({
             onChange={(e) => setPassword(e.target.value)}
             id="password"
             type="password"
+            placeholder="Enter your password"
+            className="text-md p-5"
             required
           />
         </div>
@@ -76,18 +76,20 @@ export function RegisterForm({
             onChange={(e) => setPassword_confirmation(e.target.value)}
             id="confirmPassword"
             type="password"
+            placeholder="Confirm your password"
+            className="text-md p-5"
             required
           />
         </div>
         <Button
           type="submit"
-          className="w-full text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]"
+          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)]"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Registering..." : "Register"}
         </Button>
       </div>
-      <div className="text-center text-sm">
+      <div className="text-left text-sm">
         Already have an account?{" "}
         <Link href="/login" className="underline underline-offset-4">
           Login

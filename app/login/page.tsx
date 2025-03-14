@@ -21,7 +21,10 @@ export default function LoginPage() {
             <br />
             Automatic UTM Generator
           </h1>
-          <p className="text-lg">
+          <p
+            className="text-md"
+            style={{ color: "rgb(153, 153, 153)", fontWeight: "bold" }}
+          >
             Bitunix-shorten simplifies your marketing campaigns
             <br /> with URL shortening & automatic UTM generation. <br />
             Track clicks, create QR codes, and optimize conversions
@@ -36,11 +39,11 @@ export default function LoginPage() {
       </div>
 
       {/* Right side with login form */}
-      <div className="flex flex-col gap-4 p-6 md:p-10">
+      <div className="bg-gray-50 flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <Image
-              src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247207/logo_file-01_lif9pq.png"
+              src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247207/logo_file-02_kiikdo.png"
               alt="logo"
               width={100}
               height={100}
@@ -49,7 +52,7 @@ export default function LoginPage() {
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-xl text-neutral-950">
             <LoginForm />
           </div>
         </div>
