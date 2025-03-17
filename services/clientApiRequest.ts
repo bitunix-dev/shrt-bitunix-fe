@@ -6,11 +6,6 @@ interface ApiClientParams {
   usePublicRoute?: boolean; // Opsi baru untuk menggunakan route publik
 }
 
-// Define a response interface to handle the expected data structure
-interface ApiResponse<T> {
-  data: T;
-}
-
 export const clientApiRequest = async <T>({
   endpoint,
   method,
@@ -35,7 +30,7 @@ export const clientApiRequest = async <T>({
     // Tambahkan query string jika ada
     const fullUrl = queryString ? `${baseUrl}&${queryString}` : baseUrl;
 
-    // console.log(`Fetching (${usePublicRoute ? "public" : "authenticated"} route):`, fullUrl); // Debug URL
+    console.log(`Fetching (${usePublicRoute ? "public" : "authenticated"} route):`, fullUrl); // Debug URL
 
     const response = await fetch(fullUrl, {
       method,
@@ -65,8 +60,8 @@ export const clientApiRequest = async <T>({
       throw new Error(`API request failed with status ${response.status}${errorDetails ? `: ${errorDetails}` : ''}`);
     }
 
-    const responseData = await response.json() as ApiResponse<T>;
-    return responseData.data;
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Error in clientApiRequest:", error);
     throw error;

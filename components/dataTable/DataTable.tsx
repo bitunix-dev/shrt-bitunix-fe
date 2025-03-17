@@ -11,57 +11,122 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Header } from "./Header";
 import { Pagination } from "./Pagination";
-import { ModalForEditing } from "./ModalForEditing";
 import { ModalForQRCode } from "./ModalForQRCode";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { clientApiRequest } from "@/services/clientApiRequest";
+import { ApiResponse, PaginatedData, UrlData, isPaginatedResponse } from "@/app/Get/dataTypes";
 
+// Updated DataTable Props interface
 interface DataTableProps {
   BtnCreate: React.ReactNode;
-  data: any;
+  initialData?: ApiResponse<UrlData>['data'] | null; // Allow undefined, null, or either response format
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
-  const [selectedItem, setSelectedItem] = React.useState<any>(null);
+export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) => {
+  const [loading, setLoading] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [qrCodeItem, setQrCodeItem] = React.useState<any>(null);
+  const [qrCodeItem, setQrCodeItem] = React.useState<UrlData | null>(null);
+  
+  // State untuk menyimpan data dari API
+  const [paginationData, setPaginationData] = React.useState<{
+    currentPage: number;
+    lastPage: number;
+    data: UrlData[];
+    total: number;
+  }>({
+    currentPage: 1,
+    lastPage: 1,
+    data: [],
+    total: 0
+  });
 
-  // ✅ Paginasi State
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 10;
+  // Initialize pagination data from initial fetch
+  React.useEffect(() => {
+    if (initialData) {
+      // Check which type of response we received
+      if (isPaginatedResponse(initialData)) {
+        // Handle paginated data
+        setPaginationData({
+          currentPage: initialData.current_page,
+          lastPage: initialData.last_page,
+          data: initialData.data,
+          total: initialData.total
+        });
+      } else if (Array.isArray(initialData)) {
+        // Handle array data
+        setPaginationData({
+          currentPage: 1,
+          lastPage: 1,
+          data: initialData,
+          total: initialData.length
+        });
+      }
+    }
+  }, [initialData]);
 
-  // ✅ Filter data berdasarkan searchQuery
-  const filteredData = data?.filter(
-    (item: any) =>
-      item.short_link.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.destination_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.tags?.some((tag: any) =>
-        tag.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-  );
+  // Fetch data with pagination
+  const fetchData = async (page: number, search?: string) => {
+    setLoading(true);
+    try {
+      // Membuat query parameters
+      const params: Record<string, string | number | boolean> = { page };
+      if (search && search.trim() !== "") {
+        params.search = search;
+      }
 
-  // ✅ Hitung jumlah total halaman
-  const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
+      // Memanggil API dengan parameter yang sesuai
+      const response = await clientApiRequest<ApiResponse<UrlData>>({
+        endpoint: "urls",
+        method: "GET",
+        params
+      });
 
-  // ✅ Filter data sesuai halaman aktif
-  const paginatedData = filteredData?.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+      // Update state with new data
+      if (isPaginatedResponse(response.data)) {
+        setPaginationData({
+          currentPage: response.data.current_page,
+          lastPage: response.data.last_page,
+          data: response.data.data,
+          total: response.data.total
+        });
+      } else if (Array.isArray(response.data)) {
+        setPaginationData({
+          currentPage: 1,
+          lastPage: 1,
+          data: response.data,
+          total: response.data.length
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // ✅ Fungsi Navigasi Halaman
-  const nextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  // Effect untuk mencari ketika query berubah (dengan debounce)
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchData(1, searchQuery);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    fetchData(page, searchQuery);
+  };
 
   const getFavicon = (url: string | URL) => {
     try {
-      const hostname = new URL(url).hostname;
+      const hostname = new URL(url.toString()).hostname;
       return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
     } catch (error) {
       console.error("Invalid URL:", url);
-      return "/default-favicon.png"; // ✅ Gambar default jika URL tidak valid
+      return "/default-favicon.png"; // Gambar default jika URL tidak valid
     }
   };
 
@@ -76,6 +141,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
             src={faviconUrl}
             alt="Favicon URL"
             className="w-7 h-7 rounded-full border-2 border-green-400 p-0.5"
+            onError={() => setFaviconExists(false)}
           />
         ) : (
           <div className="w-6 h-6 rounded-full bg-green-400"></div>
@@ -99,12 +165,16 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
   return (
     <div className="w-full mb-20">
       {/* HEADER */}
-      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} />{" "}
-      {/* ✅ Pass setSearchQuery */}
+      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} />
+      
       {/* LIST VIEW */}
       <div className="mt-4 space-y-2">
-        {paginatedData && paginatedData.length ? (
-          paginatedData.map((item: any, index: number) => (
+        {loading ? (
+          <div className="py-8 flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
+          </div>
+        ) : paginationData.data && paginationData.data.length > 0 ? (
+          paginationData.data.map((item, index) => (
             <div
               key={index}
               className="lg:flex items-center w-full justify-between bg-neutral-800 border border-neutral-800 p-4 rounded-lg shadow-sm"
@@ -119,7 +189,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     {item.short_link}
                     <button
                       className="text-gray-500 hover:text-white"
-                      onClick={() => handleCopy(item.short_link)}
+                      onClick={() => handleCopy(item.short_link || '')}
                     >
                       <Copy className="w-3 h-3" />
                     </button>
@@ -156,19 +226,19 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
 
               {/* Tags & Clicks */}
               <div className="flex items-center gap-2">
-                {item.tags?.length > 0 && (
+                {Array.isArray(item.tags) && item.tags.length > 0 && (
                   <div className="flex items-center gap-1">
                     {item.tags
                       .slice(0, 2)
-                      .map((tag: { id: number; name: string }) => (
+                      .map((tag: any, tagIndex: number) => (
                         <span
-                          key={tag.id}
+                          key={tagIndex}
                           className="px-2 py-1 text-xs font-medium text-black bg-[var(--bitunix)] rounded-md"
                         >
-                          {tag.name}
+                          {typeof tag === 'string' ? tag : tag.name}
                         </span>
                       ))}
-                    {item.tags?.length > 2 && (
+                    {item.tags.length > 2 && (
                       <span className="px-2 py-1 text-xs font-medium text-black bg-lime-400 rounded-md">
                         +{item.tags.length - 2}
                       </span>
@@ -184,7 +254,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     height={16}
                     className="w-4 h-4"
                   />
-                  {Number(item.clicks).toLocaleString("en-US")} clicks
+                  {Number(item.clicks || 0).toLocaleString("en-US")} clicks
                 </span>
 
                 {/* Actions */}
@@ -203,7 +273,7 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                      onClick={() => handleCopy(item.short_link)}
+                      onClick={() => handleCopy(item.short_link || '')}
                     >
                       Copy Link ID
                     </DropdownMenuItem>
@@ -213,19 +283,20 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, data }) => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No results.</p>
+          <p className="text-center text-gray-500">No results found.</p>
         )}
       </div>
-      {/* ✅ PAGINATION CONTROL */}
-      {totalPages > 1 && (
+      
+      {/* PAGINATION CONTROL */}
+      {paginationData.lastPage > 1 && (
         <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          nextPage={nextPage}
-          prevPage={prevPage}
+          currentPage={paginationData.currentPage}
+          lastPage={paginationData.lastPage}
+          onPageChange={handlePageChange}
         />
       )}
-      {/* ✅ Tambahkan Modal QR Code di bawah pagination */}
+      
+      {/* Modal QR Code */}
       {qrCodeItem && (
         <ModalForQRCode item={qrCodeItem} onClose={() => setQrCodeItem(null)} />
       )}

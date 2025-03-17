@@ -1,33 +1,51 @@
+// Link Preview type definition
 export interface LinkPreview {
   image: string | null;
   title: string;
   description: string;
 }
 
-// ✅ Struktur untuk data klik berdasarkan URL
+// URL data structure
 export interface UrlData {
+  id?: number;
   destination_url: string; 
-  tags: string[]; 
-  source: string;
-  medium: string;
-  campaign: string;
-  term: string;
-  content: string;
-  referral: string;
-  preview?: LinkPreview | null; 
+  short_link?: string;
+  tags: string[] | {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    pivot: {
+      url_id: number;
+      tag_id: number;
+    };
+  }[]; 
+  source: string | null;
+  medium: string | null;
+  campaign: string | null;
+  term: string | null;
+  content: string | null;
+  referral: string | null;
+  clicks?: number;
+  created_at?: string;
+  updated_at?: string;
+  preview?: LinkPreview | null;
+  qr_code?: string | null;
+  mixed_url?: string;
 }
 
-// ✅ Struktur data klik berdasarkan lokasi
+// Location-based click data
 export interface ClickLocationData {
   id: number;
   country?: string;
+  country_flag?: string; // For country flags in UI
   city?: string;
   region?: string;
   continent?: string;
   total_clicks: number;
 }
 
-// ✅ Struktur data klik berdasarkan perangkat & browser
+// Device and browser click data
 export interface ClickDeviceData {
   id: number;
   device?: string;
@@ -35,7 +53,7 @@ export interface ClickDeviceData {
   total_clicks: number;
 }
 
-// ✅ Struktur data klik berdasarkan UTM
+// UTM parameter click data
 export interface ClickUTMData {
   id: number;
   source?: string;
@@ -47,8 +65,54 @@ export interface ClickUTMData {
   total_clicks: number;
 }
 
-// ✅ Struktur utama untuk API Response
+// Pagination metadata structure
+export interface PaginationMeta {
+  current_page: number;
+  from: number;
+  last_page: number;
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+  first_page_url: string;
+  last_page_url: string;
+  next_page_url: string | null;
+  prev_page_url: string | null;
+  links: {
+    url: string | null;
+    label: string;
+    active: boolean;
+  }[];
+}
+
+// Paginated data structure
+export interface PaginatedData<T> {
+  current_page: number;
+  data: T[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: {
+    url: string | null;
+    label: string;
+    active: boolean;
+  }[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+// API Response that can handle both direct arrays and paginated data
 export interface ApiResponse<T = any> {
   status: number;
-  data: T[];
+  data: T[] | PaginatedData<T>;
+}
+
+// Type guard to check if a response is paginated
+export function isPaginatedResponse<T>(data: T[] | PaginatedData<T>): data is PaginatedData<T> {
+  return (data as PaginatedData<T>).current_page !== undefined;
 }

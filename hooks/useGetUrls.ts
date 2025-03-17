@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { clientApiRequest } from "@/services/clientApiRequest";
-import { ApiResponse } from "@/app/Get/dataTypes";
+import { ApiResponse, UrlData } from "@/app/Get/dataTypes";
 
-const fetchUrls = async (): Promise<ApiResponse> => {
+const fetchUrls = async (): Promise<ApiResponse<UrlData>> => {
   try {
-    return await clientApiRequest<ApiResponse>({
+    return await clientApiRequest<ApiResponse<UrlData>>({
       method: "GET",
       endpoint: "urls",
+      params: { page: 1 } // Start with page 1 by default
     });
   } catch (error) {
     console.error("Error fetching URLs:", error);
@@ -14,12 +15,12 @@ const fetchUrls = async (): Promise<ApiResponse> => {
   }
 };
 
-// ✅ Hook React Query untuk mengambil URL + Link Preview
+// Hook to fetch URL data
 export const useGetUrls = () => {
-  return useQuery<ApiResponse>({
-    queryKey: ["urls"], // Key unik untuk caching
+  return useQuery<ApiResponse<UrlData>, Error>({
+    queryKey: ["urls"], // Unique key for caching
     queryFn: fetchUrls,
-    staleTime: 1000 * 60 * 5, // Data akan dianggap fresh selama 5 menit
-    refetchOnWindowFocus: false, // Tidak auto-refresh saat pindah tab
+    staleTime: 1000 * 60 * 5, // Data is fresh for 5 minutes
+    refetchOnWindowFocus: false, // Don't auto-refresh when tab focus changes
   });
 };
