@@ -6,6 +6,11 @@ interface ApiClientParams {
   usePublicRoute?: boolean; // Opsi baru untuk menggunakan route publik
 }
 
+// Define a response interface to handle the expected data structure
+interface ApiResponse<T> {
+  data: T;
+}
+
 export const clientApiRequest = async <T>({
   endpoint,
   method,
@@ -60,8 +65,8 @@ export const clientApiRequest = async <T>({
       throw new Error(`API request failed with status ${response.status}${errorDetails ? `: ${errorDetails}` : ''}`);
     }
 
-    const data: T = await response.json();
-    return data;
+    const responseData = await response.json() as ApiResponse<T>;
+    return responseData.data;
   } catch (error) {
     console.error("Error in clientApiRequest:", error);
     throw error;
