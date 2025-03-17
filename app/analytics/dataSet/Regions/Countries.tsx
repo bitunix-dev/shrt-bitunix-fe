@@ -2,25 +2,30 @@
 import { useGetClicksCountries } from "@/hooks/useGetClicksCountries";
 import { Button } from "@/components/ui/button";
 import { clientApiRequest } from "@/services/clientApiRequest";
-import { ApiResponse, ClickLocationData, PaginatedData, isPaginatedResponse } from "@/app/Get/dataTypes";
+import {
+  ApiResponse,
+  ClickLocationData,
+  PaginatedData,
+  isPaginatedResponse,
+} from "@/app/Get/dataTypes";
 import Image from "next/image"; // Import Next.js Image component
 import React, { useState, useEffect } from "react";
 
 // Pagination component
-const Pagination = ({ 
-  currentPage, 
-  lastPage, 
-  onPageChange 
-}: { 
-  currentPage: number; 
-  lastPage: number; 
+const Pagination = ({
+  currentPage,
+  lastPage,
+  onPageChange,
+}: {
+  currentPage: number;
+  lastPage: number;
   onPageChange: (page: number) => void;
 }) => {
   // Create array of page numbers to show
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
     const maxDisplayed = 5; // Maximum number of page buttons to display
-    
+
     // Logic to display appropriate page numbers
     if (lastPage <= maxDisplayed) {
       // If we have few pages, show all of them
@@ -31,32 +36,32 @@ const Pagination = ({
       // Complex logic for many pages
       // Always include page 1
       pageNumbers.push(1);
-      
+
       // Calculate start and end of displayed range
       const rangeStart = Math.max(2, currentPage - 1); // Changed let to const
       const rangeEnd = Math.min(lastPage - 1, currentPage + 1); // Changed let to const
-      
+
       // Add ellipsis after page 1 if needed
       if (rangeStart > 2) {
         pageNumbers.push("ellipsis1");
       }
-      
+
       // Add pages in range
       for (let i = rangeStart; i <= rangeEnd; i++) {
         pageNumbers.push(i);
       }
-      
+
       // Add ellipsis before last page if needed
       if (rangeEnd < lastPage - 1) {
         pageNumbers.push("ellipsis2");
       }
-      
+
       // Always include last page if it's not already included
       if (lastPage !== 1) {
         pageNumbers.push(lastPage);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -82,7 +87,7 @@ const Pagination = ({
               </span>
             );
           }
-          
+
           return (
             <Button
               key={index}
@@ -121,7 +126,8 @@ interface CountryData extends ClickLocationData {
 }
 
 export const Countries = () => {
-  const { data: initialData, isLoading: initialLoading } = useGetClicksCountries();
+  const { data: initialData, isLoading: initialLoading } =
+    useGetClicksCountries();
   const [loading, setLoading] = useState(false);
   const [paginationData, setPaginationData] = useState<{
     currentPage: number;
@@ -132,7 +138,7 @@ export const Countries = () => {
     currentPage: 1,
     lastPage: 1,
     data: [],
-    total: 0
+    total: 0,
   });
 
   // Initialize pagination data from initial fetch
@@ -145,7 +151,7 @@ export const Countries = () => {
           currentPage: 1,
           lastPage: 1,
           data: initialData.data as CountryData[],
-          total: initialData.data.length
+          total: initialData.data.length,
         });
       } else {
         // Handle paginated response
@@ -153,7 +159,7 @@ export const Countries = () => {
           currentPage: initialData.data.current_page,
           lastPage: initialData.data.last_page,
           data: initialData.data.data as CountryData[],
-          total: initialData.data.total
+          total: initialData.data.total,
         });
       }
     }
@@ -166,7 +172,7 @@ export const Countries = () => {
       const response = await clientApiRequest<ApiResponse<CountryData>>({
         endpoint: "analytics/countries",
         method: "GET",
-        params: { page }
+        params: { page },
       });
 
       // Use type guard to handle different response formats
@@ -177,7 +183,7 @@ export const Countries = () => {
             currentPage: response.data.current_page,
             lastPage: response.data.last_page,
             data: response.data.data,
-            total: response.data.total
+            total: response.data.total,
           });
         } else {
           // It's a direct array
@@ -185,7 +191,7 @@ export const Countries = () => {
             currentPage: 1,
             lastPage: 1,
             data: response.data,
-            total: response.data.length
+            total: response.data.length,
           });
         }
       }
@@ -203,7 +209,7 @@ export const Countries = () => {
 
   // Determine if we're loading
   const isLoading = initialLoading || loading;
-  
+
   return (
     <div>
       {isLoading ? (
@@ -218,7 +224,7 @@ export const Countries = () => {
               className="bg-neutral-700 text-white py-2 px-3 rounded-md flex w-full items-center justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
             >
               <div className="flex items-center">
-                <Image
+                <img
                   src={item.country_flag}
                   alt={`${item.country} flag`}
                   width={24}
@@ -232,7 +238,7 @@ export const Countries = () => {
               </span>
             </div>
           ))}
-          
+
           {/* Pagination - only show if more than one page */}
           {paginationData.lastPage > 1 && (
             <Pagination
