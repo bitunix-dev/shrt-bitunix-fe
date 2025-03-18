@@ -7,7 +7,7 @@ const fetchUrls = async (): Promise<ApiResponse<UrlData>> => {
     return await clientApiRequest<ApiResponse<UrlData>>({
       method: "GET",
       endpoint: "urls",
-      params: { page: 1 } // Start with page 1 by default
+      // params: { page: 1 } // Start with page 1 by default
     });
   } catch (error) {
     console.error("Error fetching URLs:", error);

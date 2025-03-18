@@ -28,7 +28,10 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
   const [searchQuery, setSearchQuery] = React.useState("");
   const [qrCodeItem, setQrCodeItem] = React.useState<UrlData | null>(null);
   
-  // State untuk menyimpan data dari API
+  // State for items per page
+  const [itemsPerPage, setItemsPerPage] = React.useState(10);
+  
+  // State untuk menyimpan data dari API dengan pagination
   const [paginationData, setPaginationData] = React.useState<{
     currentPage: number;
     lastPage: number;
@@ -62,27 +65,30 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
           total: initialData.length
         });
       }
+    } else {
+      // If no initial data, fetch first page
+      fetchData(1);
     }
   }, [initialData]);
 
-  // Fetch data with pagination
-  const fetchData = async (page: number, search?: string) => {
+  // Fetch data with pagination from server
+  const fetchData = async (page: number, perPage: number = itemsPerPage) => {
     setLoading(true);
     try {
-      // Membuat query parameters
-      const params: Record<string, string | number | boolean> = { page };
-      if (search && search.trim() !== "") {
-        params.search = search;
-      }
+      // Prepare query parameters for pagination (no search parameter)
+      const params: Record<string, string | number | boolean> = { 
+        page,
+        p: perPage
+      };
 
-      // Memanggil API dengan parameter yang sesuai
+      // API request with pagination parameters
       const response = await clientApiRequest<ApiResponse<UrlData>>({
         endpoint: "urls",
         method: "GET",
         params
       });
 
-      // Update state with new data
+      // Update state with paginated data from server
       if (isPaginatedResponse(response.data)) {
         setPaginationData({
           currentPage: response.data.current_page,
@@ -106,18 +112,50 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
     }
   };
 
-  // Effect untuk mencari ketika query berubah (dengan debounce)
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchData(1, searchQuery);
-    }, 500); // 500ms debounce
+  // Apply client-side filtering to the current page of data
+  const filteredData = React.useMemo(() => {
+    if (!searchQuery.trim()) {
+      return paginationData.data;
+    }
+    
+    return paginationData.data.filter(item => {
+      const query = searchQuery.toLowerCase();
+      
+      // Search in short_link
+      if (item.short_link && item.short_link.toLowerCase().includes(query)) {
+        return true;
+      }
+      
+      // Search in destination_url
+      if (item.destination_url && item.destination_url.toLowerCase().includes(query)) {
+        return true;
+      }
+      
+      // Search in tags
+      if (Array.isArray(item.tags) && item.tags.some(tag => {
+        if (typeof tag === 'string') {
+          return tag.toLowerCase().includes(query);
+        } else if (tag && typeof tag === 'object' && tag.name) {
+          return tag.name.toLowerCase().includes(query);
+        }
+        return false;
+      })) {
+        return true;
+      }
+      
+      return false;
+    });
+  }, [paginationData.data, searchQuery]);
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Handle page change
+  // Handle page change (server-side)
   const handlePageChange = (page: number) => {
-    fetchData(page, searchQuery);
+    fetchData(page, itemsPerPage);
+  };
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    fetchData(1, value); // Reset to page 1 when changing items per page
   };
 
   const getFavicon = (url: string | URL) => {
@@ -165,7 +203,12 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
   return (
     <div className="w-full mb-20">
       {/* HEADER */}
-      <Header BtnCreate={BtnCreate} setSearchQuery={setSearchQuery} />
+      <Header 
+        BtnCreate={BtnCreate} 
+        setSearchQuery={setSearchQuery} 
+        // initialSearchQuery={searchQuery}
+        // isSearching={searchQuery !== ""}
+      />
       
       {/* LIST VIEW */}
       <div className="mt-4 space-y-2">
@@ -173,8 +216,8 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
           <div className="py-8 flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
           </div>
-        ) : paginationData.data && paginationData.data.length > 0 ? (
-          paginationData.data.map((item, index) => (
+        ) : filteredData && filteredData.length > 0 ? (
+          filteredData.map((item, index) => (
             <div
               key={index}
               className="lg:flex items-center w-full justify-between bg-neutral-800 border border-neutral-800 p-4 rounded-lg shadow-sm"
@@ -283,18 +326,32 @@ export const DataTable: React.FC<DataTableProps> = ({ BtnCreate, initialData }) 
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No results found.</p>
+          <p className="text-center text-gray-500">
+            {searchQuery ? `No results found for "${searchQuery}" on this page.` : "No results found."}
+          </p>
         )}
       </div>
       
+      {/* Search notification */}
+      {searchQuery && (
+        <div className="mt-4 text-sm text-gray-400 text-center">
+          {filteredData.length > 0 
+            ? `Found ${filteredData.length} result${filteredData.length !== 1 ? 's' : ''} for "${searchQuery}" on this page.`
+            : ''}
+        </div>
+      )}
+      
       {/* PAGINATION CONTROL */}
-      {paginationData.lastPage > 1 && (
+      {/* {paginationData.lastPage > 1 && ( */}
         <Pagination
           currentPage={paginationData.currentPage}
           lastPage={paginationData.lastPage}
           onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          totalItems={paginationData.total}
         />
-      )}
+      {/* )} */}
       
       {/* Modal QR Code */}
       {qrCodeItem && (
