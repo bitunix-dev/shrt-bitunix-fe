@@ -60,6 +60,7 @@ export const Forms: React.FC<FormsProps> = ({
   mediumOptions
 }) => {
   const [isCustomShortLink, setIsCustomShortLink] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   // ✅ Fungsi untuk generate random string 6 huruf
   const generateRandomString = (length = 6) => {
@@ -69,6 +70,20 @@ export const Forms: React.FC<FormsProps> = ({
       { length },
       () => characters[Math.floor(Math.random() * characters.length)]
     ).join("");
+  };
+
+  // ✅ Validasi shortLink untuk memastikan tidak ada karakter khusus
+  const validateShortLink = (value: string) => {
+    // Hanya mengizinkan huruf dan angka (alphanumerik)
+    const validRegex = /^[a-zA-Z0-9]*$/;
+    
+    if (!validRegex.test(value)) {
+      setValidationError("Short link hanya boleh berisi huruf dan angka");
+      return false;
+    }
+    
+    setValidationError("");
+    return true;
   };
 
   // ✅ Gunakan useEffect untuk generate short link hanya saat komponen pertama kali di-mount
@@ -99,18 +114,32 @@ export const Forms: React.FC<FormsProps> = ({
           <Label className="mb-3 mt-5" htmlFor="short-link">
             Short Link
           </Label>
-          <div className="flex">
-            <ComboboxForLink />
-            <Input
-              className="rounded-l-none"
-              id="short-link"
-              placeholder="Masukkan short link atau gunakan default"
-              value={shortLink}
-              onChange={(e) => {
-                setShortLink(e.target.value);
-                setIsCustomShortLink(e.target.value.trim() !== ""); // ✅ Tandai jika user mengedit short link
-              }}
-            />
+          <div className="flex flex-col">
+            <div className="flex">
+              <ComboboxForLink />
+              <Input
+                className={`rounded-l-none ${validationError ? "border-red-500" : ""}`}
+                id="short-link"
+                placeholder="Masukkan short link atau gunakan default"
+                value={shortLink}
+                onChange={(e) => {
+                  // Cek validasi sebelum mengubah nilai
+                  const newValue = e.target.value;
+                  if (validateShortLink(newValue)) {
+                    setShortLink(newValue);
+                    setIsCustomShortLink(newValue.trim() !== ""); // ✅ Tandai jika user mengedit short link
+                  } else {
+                    // Jika ada karakter tidak valid, filter semua karakter yang tidak valid
+                    const filteredValue = newValue.replace(/[^a-zA-Z0-9]/g, '');
+                    setShortLink(filteredValue);
+                    setIsCustomShortLink(filteredValue.trim() !== "");
+                  }
+                }}
+              />
+            </div>
+            {validationError && (
+              <span className="text-red-500 text-sm mt-1">{validationError}</span>
+            )}
           </div>
           <Label className="mt-5 mb-3">Tags</Label>
           <ComboBoxForTags
