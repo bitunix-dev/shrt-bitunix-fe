@@ -57,7 +57,7 @@ export const Forms: React.FC<FormsProps> = ({
   referral,
   setReferral,
   sourceOptions,
-  mediumOptions
+  mediumOptions,
 }) => {
   const [isCustomShortLink, setIsCustomShortLink] = useState(false);
   const [validationError, setValidationError] = useState("");
@@ -76,12 +76,12 @@ export const Forms: React.FC<FormsProps> = ({
   const validateShortLink = (value: string) => {
     // Hanya mengizinkan huruf dan angka (alphanumerik)
     const validRegex = /^[a-zA-Z0-9]*$/;
-    
+
     if (!validRegex.test(value)) {
-      setValidationError("Short link hanya boleh berisi huruf dan angka");
+      setValidationError("Contains only letters and numbers.");
       return false;
     }
-    
+
     setValidationError("");
     return true;
   };
@@ -118,7 +118,9 @@ export const Forms: React.FC<FormsProps> = ({
             <div className="flex">
               <ComboboxForLink />
               <Input
-                className={`rounded-l-none ${validationError ? "border-red-500" : ""}`}
+                className={`rounded-l-none ${
+                  validationError ? "border-red-500" : ""
+                }`}
                 id="short-link"
                 placeholder="Masukkan short link atau gunakan default"
                 value={shortLink}
@@ -130,7 +132,7 @@ export const Forms: React.FC<FormsProps> = ({
                     setIsCustomShortLink(newValue.trim() !== ""); // ✅ Tandai jika user mengedit short link
                   } else {
                     // Jika ada karakter tidak valid, filter semua karakter yang tidak valid
-                    const filteredValue = newValue.replace(/[^a-zA-Z0-9]/g, '');
+                    const filteredValue = newValue.replace(/[^a-zA-Z0-9]/g, "");
                     setShortLink(filteredValue);
                     setIsCustomShortLink(filteredValue.trim() !== "");
                   }
@@ -138,7 +140,9 @@ export const Forms: React.FC<FormsProps> = ({
               />
             </div>
             {validationError && (
-              <span className="text-red-500 text-sm mt-1">{validationError}</span>
+              <span className="text-red-500 text-sm mt-1">
+                {validationError}
+              </span>
             )}
           </div>
           <Label className="mt-5 mb-3">Tags</Label>
@@ -165,7 +169,8 @@ export const Forms: React.FC<FormsProps> = ({
               destinationUrl={destinationUrl}
               setDestinationUrl={setDestinationUrl}
               sourceOptions={sourceOptions}
-              mediumOptions={mediumOptions} />
+              mediumOptions={mediumOptions}
+            />
           </div>
         </div>
         <div className="bg-neutral-900 text-white font-bold p-3 pb-5 border h-max border-neutral-900 rounded-md">
