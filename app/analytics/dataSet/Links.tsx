@@ -2,7 +2,8 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useGetUrls } from "@/hooks/useGetUrls";
+// import { useGetUrls } from "@/hooks/useGetUrls";
+import { useGetClicksShortUrl } from "@/hooks/useGetClicksShortUrl";
 import { clientApiRequest } from "@/services/clientApiRequest";
 import { ApiResponse, UrlData, PaginatedData, isPaginatedResponse } from "@/app/Get/dataTypes";
 import Image from "next/image";
@@ -124,7 +125,7 @@ interface FaviconWithFallbackProps {
 }
 
 export const Links = () => {
-  const { data: initialData, isLoading: initialLoading } = useGetUrls();
+  const { data: initialData, isLoading: initialLoading } = useGetClicksShortUrl();
   const [loading, setLoading] = React.useState(false);
   const [paginationData, setPaginationData] = React.useState<{
     currentPage: number;
@@ -143,7 +144,7 @@ export const Links = () => {
     if (initialData?.data) {
       // Use the isPaginatedResponse type guard if available
       if (typeof initialData.data === 'object' && 'current_page' in initialData.data) {
-        const paginatedData = initialData.data as PaginatedData<UrlData>;
+        const paginatedData = initialData.data as unknown as PaginatedData<UrlData>;
         setPaginationData({
           currentPage: paginatedData.current_page,
           lastPage: paginatedData.last_page,
@@ -167,7 +168,7 @@ export const Links = () => {
     setLoading(true);
     try {
       const response = await clientApiRequest<ApiResponse<UrlData>>({
-        endpoint: "urls",
+        endpoint: "analytics/urls",
         method: "GET",
         params: { page }
       });
