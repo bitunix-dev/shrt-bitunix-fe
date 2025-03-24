@@ -1,5 +1,6 @@
 import { useQRCode } from "next-qrcode";
 import { useState, useEffect, useRef } from "react";
+import NextImage from "next/image";
 
 interface QRCodeGeneratorProps {
   value: string; // ✅ Required property for QR code
@@ -37,7 +38,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
 
       // Add the logo in the center of the new canvas
       if (logo) {
-        const logoImg = new Image();
+        const logoImg = new window.Image();
         logoImg.onload = () => {
           const logoSize = 70; // Adjust logo size as needed
           downloadContext.drawImage(
@@ -82,7 +83,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
       {/* Add static logo in the center if provided */}
       {logo && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <img
+          <NextImage
             src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247206/bitunix_icon-01_b9jsq4.png"
             alt="QR Code Logo"
             width={35} // Customize logo size
