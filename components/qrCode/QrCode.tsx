@@ -68,7 +68,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
   };
 
   return (
-    <div className="relative w-[300px] h-[300px]" ref={canvasContainerRef}>
+    <div className="relative w-[300px] h-max" ref={canvasContainerRef}>
       {/* Generate QR Code */}
       <Canvas
         text={value}
@@ -98,7 +98,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
       {/* Add download button */}
       <button
         onClick={handleDownloadLocal}
-        className="mt-4 px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2"
+        className="mt-4 px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2 mx-auto"
       >
         <svg
           className="w-5 h-5 text-black"
