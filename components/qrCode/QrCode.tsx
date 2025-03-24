@@ -5,14 +5,9 @@ import NextImage from "next/image";
 interface QRCodeGeneratorProps {
   value: string; // ✅ Required property for QR code
   logo?: string; // ✅ Optional property for logo in the center
-  handleDownload: () => void; // Pass handleDownload as a prop
 }
 
-const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
-  value,
-  logo,
-  handleDownload,
-}) => {
+const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
   const { Canvas } = useQRCode();
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +21,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
     }
   }, [value]);
 
-  const handleDownloadLocal = () => {
+  const handleDownload = () => {
     // Create a new canvas with 1080x1080 size for download
     const downloadCanvas = document.createElement("canvas");
     const downloadContext = downloadCanvas.getContext("2d");
@@ -67,6 +62,10 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
     }
   };
 
+  if (!value) {
+    return <p className="text-red-500">Error: QR Code value is required</p>;
+  }
+
   return (
     <div className="relative w-[300px] h-[300px]" ref={canvasContainerRef}>
       {/* Generate QR Code */}
@@ -97,7 +96,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
 
       {/* Add download button */}
       <button
-        onClick={handleDownloadLocal}
+        onClick={handleDownload}
         className="mt-4 px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2"
       >
         <svg
