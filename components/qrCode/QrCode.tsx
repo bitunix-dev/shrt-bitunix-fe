@@ -41,7 +41,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
         const logoImg = new window.Image();
         logoImg.crossOrigin = "anonymous";
         logoImg.onload = () => {
-          const logoSize = 70; // Adjust logo size as needed
+          const logoSize = 210; // Adjust logo size as needed
           downloadContext.drawImage(
             logoImg,
             (1080 - logoSize) / 2,
@@ -67,12 +67,12 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
   }
 
   return (
-    <div className="relative w-[150px] h-[150px]" ref={canvasContainerRef}>
+    <div className="relative w-[300px] h-[300px]" ref={canvasContainerRef}>
       {/* Generate QR Code */}
       <Canvas
         text={value}
         options={{
-          width: 150, // Customize QR Code size
+          width: 300, // Customize QR Code size
           margin: 1,
           color: {
             dark: "#000000", // Dark color for QR code
