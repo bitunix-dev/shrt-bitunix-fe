@@ -39,6 +39,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
       // Add the logo in the center of the new canvas
       if (logo) {
         const logoImg = new window.Image();
+        logoImg.crossOrigin = "anonymous";
         logoImg.onload = () => {
           const logoSize = 70; // Adjust logo size as needed
           downloadContext.drawImage(
