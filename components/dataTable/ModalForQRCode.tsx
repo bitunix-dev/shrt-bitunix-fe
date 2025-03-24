@@ -44,7 +44,7 @@ export const ModalForQRCode: React.FC<ModalForQRCodeProps> = ({
         </div>
 
         {/* ✅ Muted Text dengan URL Source */}
-        <div className="mt-4 text-center text-sm text-gray-400 text-base">
+        {/* <div className="mt-4 text-center text-sm text-gray-400 text-base">
           This QR Code is generated from:
           <a
             href={item.short_link}
@@ -54,7 +54,7 @@ export const ModalForQRCode: React.FC<ModalForQRCodeProps> = ({
           >
             {item.short_link}
           </a>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );
