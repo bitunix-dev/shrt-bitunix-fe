@@ -67,32 +67,34 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
   }
 
   return (
-    <div className="relative w-[300px] h-max" ref={canvasContainerRef}>
+    <div className="w-[300px] h-max" ref={canvasContainerRef}>
       {/* Generate QR Code */}
-      <Canvas
-        text={value}
-        options={{
-          width: 300, // Customize QR Code size
-          margin: 1,
-          color: {
-            dark: "#000000", // Dark color for QR code
-            light: "#FFFFFF", // Light color for QR code background
-          },
-        }}
-      />
+      <div className="relative">
+        <Canvas
+          text={value}
+          options={{
+            width: 300, // Customize QR Code size
+            margin: 1,
+            color: {
+              dark: "#000000", // Dark color for QR code
+              light: "#FFFFFF", // Light color for QR code background
+            },
+          }}
+        />
 
-      {/* Add static logo in the center if provided */}
-      {logo && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <NextImage
-            src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247206/bitunix_icon-01_b9jsq4.png"
-            alt="QR Code Logo"
-            width={70} // Customize logo size
-            height={70}
-            className="rounded-b-md bg-white p-1" // Padding to ensure the logo does not overlap with QR code
-          />
-        </div>
-      )}
+        {/* Add static logo in the center if provided */}
+        {logo && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <NextImage
+              src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247206/bitunix_icon-01_b9jsq4.png"
+              alt="QR Code Logo"
+              width={70} // Customize logo size
+              height={70}
+              className="rounded-b-md bg-white p-1" // Padding to ensure the logo does not overlap with QR code
+            />
+          </div>
+        )}
+      </div>
 
       {/* Add download button */}
       <button
