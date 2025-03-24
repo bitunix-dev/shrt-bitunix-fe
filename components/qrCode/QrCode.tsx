@@ -87,8 +87,8 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
           <NextImage
             src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247206/bitunix_icon-01_b9jsq4.png"
             alt="QR Code Logo"
-            width={35} // Customize logo size
-            height={35}
+            width={70} // Customize logo size
+            height={70}
             className="rounded-b-md bg-white p-1" // Padding to ensure the logo does not overlap with QR code
           />
         </div>
@@ -97,9 +97,23 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
       {/* Add download button */}
       <button
         onClick={handleDownload}
-        className="mt-2 px-4 py-2 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md"
+        className="mt-4 px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2"
       >
-        Download QR Code
+        <svg
+          className="w-5 h-5 text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7M12 4v12"
+          />
+        </svg>
+        <span>Download QR Code</span>
       </button>
     </div>
   );
