@@ -5,8 +5,95 @@ import { Medium } from "./Medium";
 import { Campaign } from "./Campaign";
 import { Term } from "./Term";
 import { Content } from "./Content";
+import { CampaignData, ContentData, SourceData, TermData } from "@/app/Get/dataTypes";
 
-export const UTMTabs = () => {
+interface UTMTabsProps {
+  dataCampaign: {
+    currentPage: number;
+    lastPage: number;
+    data: CampaignData[]; // Replace with actual type
+    total: number;
+  };
+  setDataCampaign: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: CampaignData[]; // Replace with actual type
+      total: number;
+    }>
+  >;
+  dataContent: {
+    currentPage: number;
+    lastPage: number;
+    data: ContentData[]; // Replace with actual type
+    total: number;
+  };
+  setDataContent: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: ContentData[]; // Replace with actual type
+      total: number;
+    }>
+  >;
+  dataMedium: {
+    currentPage: number;
+    lastPage: number;
+    data: ContentData[]; // Replace with actual type
+    total: number;
+  };
+  setDataMedium: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: ContentData[]; // Replace with actual type
+      total: number;
+    }>
+  >;
+  dataSource: {
+    currentPage: number;
+    lastPage: number;
+    data: SourceData[]; // Replace with actual type
+    total: number;
+  };
+  setDataSource: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: SourceData[]; // Replace with actual type
+      total: number;
+    }>
+  >;
+  dataTerms: {
+    currentPage: number;
+    lastPage: number;
+    data: TermData[]; // Replace with actual type
+    total: number;
+  };
+  setDataTerms: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: TermData[]; // Replace with actual type
+      total: number;
+    }>
+  >;
+  isClickShortLink: boolean;
+}
+
+export const UTMTabs:React.FC<UTMTabsProps> = ({
+  dataCampaign,
+  setDataCampaign,
+  dataContent,
+  setDataContent,
+  dataMedium,
+  setDataMedium,
+  dataSource,
+  setDataSource,
+  dataTerms,
+  setDataTerms,
+  isClickShortLink
+}) => {
   return (
     <Tabs defaultValue="source">
       <Card className="bg-neutral-800 border border-neutral-800 text-white h-max">
@@ -47,27 +134,27 @@ export const UTMTabs = () => {
         </CardHeader>
         <TabsContent value="source">
           <CardContent>
-            <Source />
+            <Source data={dataSource} setData={setDataSource} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
         <TabsContent value="medium">
           <CardContent>
-            <Medium />
+            <Medium data={dataMedium} setData={setDataMedium} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
         <TabsContent value="campaign">
           <CardContent>
-            <Campaign />
+            <Campaign data={dataCampaign} setData={setDataCampaign} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
-        <TabsContent value="term">
+        <TabsContent value="term">s
           <CardContent>
-            <Term />
+            <Term data={dataTerms} setData={setDataTerms} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
         <TabsContent value="content">
           <CardContent>
-            <Content />
+            <Content data={dataContent} setData={setDataContent} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
       </Card>

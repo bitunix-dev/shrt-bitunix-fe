@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 import { clientApiRequest } from "@/services/clientApiRequest";
 import {
   ApiResponse,
-  ClickLocationData,
-  PaginatedData,
   isPaginatedResponse,
+  CountryData
 } from "@/app/Get/dataTypes";
-import Image from "next/image"; // Import Next.js Image component
 import React, { useState, useEffect } from "react";
 
 // Pagination component
@@ -21,45 +19,24 @@ const Pagination = ({
   lastPage: number;
   onPageChange: (page: number) => void;
 }) => {
-  // Create array of page numbers to show
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
-    const maxDisplayed = 5; // Maximum number of page buttons to display
+    const maxDisplayed = 5;
 
-    // Logic to display appropriate page numbers
     if (lastPage <= maxDisplayed) {
-      // If we have few pages, show all of them
       for (let i = 1; i <= lastPage; i++) {
         pageNumbers.push(i);
       }
     } else {
-      // Complex logic for many pages
-      // Always include page 1
       pageNumbers.push(1);
+      const rangeStart = Math.max(2, currentPage - 1);
+      const rangeEnd = Math.min(lastPage - 1, currentPage + 1);
 
-      // Calculate start and end of displayed range
-      const rangeStart = Math.max(2, currentPage - 1); // Changed let to const
-      const rangeEnd = Math.min(lastPage - 1, currentPage + 1); // Changed let to const
+      if (rangeStart > 2) pageNumbers.push("ellipsis1");
+      for (let i = rangeStart; i <= rangeEnd; i++) pageNumbers.push(i);
+      if (rangeEnd < lastPage - 1) pageNumbers.push("ellipsis2");
 
-      // Add ellipsis after page 1 if needed
-      if (rangeStart > 2) {
-        pageNumbers.push("ellipsis1");
-      }
-
-      // Add pages in range
-      for (let i = rangeStart; i <= rangeEnd; i++) {
-        pageNumbers.push(i);
-      }
-
-      // Add ellipsis before last page if needed
-      if (rangeEnd < lastPage - 1) {
-        pageNumbers.push("ellipsis2");
-      }
-
-      // Always include last page if it's not already included
-      if (lastPage !== 1) {
-        pageNumbers.push(lastPage);
-      }
+      if (lastPage !== 1) pageNumbers.push(lastPage);
     }
 
     return pageNumbers;
@@ -67,7 +44,6 @@ const Pagination = ({
 
   return (
     <div className="flex justify-center items-center gap-2 mt-6">
-      {/* Previous Button */}
       <Button
         className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black"
         onClick={() => onPageChange(currentPage - 1)}
@@ -77,21 +53,14 @@ const Pagination = ({
         ←
       </Button>
 
-      {/* Page Numbers */}
       <div className="flex items-center gap-1">
-        {getPageNumbers().map((page, index) => {
-          if (page === "ellipsis1" || page === "ellipsis2") {
-            return (
-              <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
-                ...
-              </span>
-            );
-          }
-
-          return (
+        {getPageNumbers().map((page, index) =>
+          typeof page === "string" ? (
+            <span key={page} className="px-2 text-gray-400">...</span>
+          ) : (
             <Button
-              key={index}
-              onClick={() => onPageChange(page as number)}
+              key={`page-${page}`}
+              onClick={() => onPageChange(page)}
               className={
                 page === currentPage
                   ? "bg-[var(--bitunix)] text-black"
@@ -101,11 +70,10 @@ const Pagination = ({
             >
               {page}
             </Button>
-          );
-        })}
+          )
+        )}
       </div>
 
-      {/* Next Button */}
       <Button
         className="bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black"
         onClick={() => onPageChange(currentPage + 1)}
@@ -118,139 +86,141 @@ const Pagination = ({
   );
 };
 
-// Define specific type for country data
-interface CountryData extends ClickLocationData {
-  country: string;
-  country_flag: string;
-  total_clicks: number;
-}
+// CountryData type
 
-export const Countries = () => {
-  const { data: initialData, isLoading: initialLoading } =
-    useGetClicksCountries();
-  const [loading, setLoading] = useState(false);
-  const [paginationData, setPaginationData] = useState<{
+
+// Countries Props
+interface CountriesProps {
+  data: {
     currentPage: number;
     lastPage: number;
     data: CountryData[];
     total: number;
-  }>({
-    currentPage: 1,
-    lastPage: 1,
-    data: [],
-    total: 0,
-  });
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: CountryData[];
+      total: number;
+    }>
+  >;
+  isClickShortLink: boolean;
+}
 
-  // Initialize pagination data from initial fetch
+export const Countries: React.FC<CountriesProps> = ({
+  data,
+  setData,
+  isClickShortLink,
+}) => {
+  const { data: initialData, isLoading: initialLoading } = useGetClicksCountries();
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (initialData?.data) {
-      // Use the isPaginatedResponse type guard
-      if (!isPaginatedResponse(initialData.data)) {
-        // Handle non-paginated response (for backward compatibility)
-        setPaginationData({
-          currentPage: 1,
-          lastPage: 1,
-          data: initialData.data as CountryData[],
-          total: initialData.data.length,
-        });
-      } else {
-        // Handle paginated response
-        setPaginationData({
-          currentPage: initialData.data.current_page,
-          lastPage: initialData.data.last_page,
-          data: initialData.data.data as CountryData[],
-          total: initialData.data.total,
-        });
-      }
-    }
-  }, [initialData]);
-
-  // Fetch data with pagination
-  const fetchData = async (page: number) => {
-    setLoading(true);
-    try {
-      const response = await clientApiRequest<ApiResponse<CountryData>>({
-        endpoint: "analytics/countries",
-        method: "GET",
-        params: { page },
-      });
-
-      // Use type guard to handle different response formats
-      if (response.data) {
-        if (isPaginatedResponse(response.data)) {
-          // It's a paginated response
-          setPaginationData({
-            currentPage: response.data.current_page,
-            lastPage: response.data.last_page,
-            data: response.data.data,
-            total: response.data.total,
-          });
-        } else {
-          // It's a direct array
-          setPaginationData({
+    if (!isClickShortLink) {
+      if (initialData?.data) {
+        if (!isPaginatedResponse(initialData.data)) {
+          setData({
             currentPage: 1,
             lastPage: 1,
-            data: response.data,
-            total: response.data.length,
+            data: initialData.data as CountryData[],
+            total: initialData.data.length,
+          });
+        } else {
+          setData({
+            currentPage: initialData.data.current_page,
+            lastPage: initialData.data.last_page,
+            data: initialData.data.data as CountryData[],
+            total: initialData.data.total,
           });
         }
       }
-    } catch (error) {
-      console.error("Error fetching paginated country data:", error);
-    } finally {
-      setLoading(false);
+    }
+  }, [initialData, setData]);
+
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    if (!isClickShortLink) {
+      try {
+        const response = await clientApiRequest<ApiResponse<CountryData>>({
+          endpoint: "analytics/countries",
+          method: "GET",
+          params: { page },
+        });
+
+        if (response.data) {
+          if (isPaginatedResponse(response.data)) {
+            setData({
+              currentPage: response.data.current_page,
+              lastPage: response.data.last_page,
+              data: response.data.data,
+              total: response.data.total,
+            });
+          } else {
+            setData({
+              currentPage: 1,
+              lastPage: 1,
+              data: response.data,
+              total: response.data.length,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching paginated country data:", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     fetchData(page);
   };
 
-  // Determine if we're loading
   const isLoading = initialLoading || loading;
 
   return (
     <div>
-      {isLoading ? (
-        <div className="py-4 flex justify-center">
-          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
-        </div>
-      ) : paginationData.data.length > 0 ? (
-        <>
-          {paginationData.data.map((item, index) => (
-            <div
-              key={index}
-              className="bg-neutral-700 text-white py-2 px-3 rounded-md flex w-full items-center justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
-            >
-              <div className="flex items-center">
-                <img
-                  src={item.country_flag}
-                  alt={`${item.country} flag`}
-                  width={24}
-                  height={16}
-                  className="w-6 h-4 rounded mr-2"
-                />
-                <p>{item.country}</p>
+      <>
+        {isLoading ? (
+          <div className="py-4 flex justify-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
+          </div>
+        ) : data.data?.length > 0 ? (
+          <>
+            {data.data.map((item, index) => (
+              <div
+                key={item.country + index}
+                className="bg-neutral-700 text-white py-2 px-3 rounded-md flex w-full items-center justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
+              >
+                <div className="flex items-center">
+                  <img
+                    src={item.country_flag}
+                    alt={`${item.country} flag`}
+                    width={24}
+                    height={16}
+                    className="w-6 h-4 rounded mr-2"
+                  />
+                  <p>{item.country}</p>
+                </div>
+                <span className="font-bold">
+                  {Number(item.total_clicks).toLocaleString("en-US")} clicks
+                </span>
               </div>
-              <span className="font-bold">
-                {Number(item.total_clicks).toLocaleString("en-US")} clicks
-              </span>
-            </div>
-          ))}
+            ))}
 
-          {/* Pagination - only show if more than one page */}
-          {paginationData.lastPage > 1 && (
-            <Pagination
-              currentPage={paginationData.currentPage}
-              lastPage={paginationData.lastPage}
-              onPageChange={handlePageChange}
-            />
-          )}
-        </>
-      ) : (
-        <p className="text-center text-gray-500">No country data available</p>
-      )}
+            {data.lastPage > 1 && (
+              <Pagination
+                currentPage={data.currentPage}
+                lastPage={data.lastPage}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
+        ) : (
+          <p className="text-center text-gray-500">No country data available</p>
+        )}
+      </>
     </div>
   );
 };

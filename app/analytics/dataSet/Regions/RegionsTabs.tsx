@@ -4,8 +4,81 @@ import { Countries } from "./Countries";
 import { Cities } from "./Cities";
 import { Regions } from "./Regions";
 import { Continents } from "./Continents";
+import { CountryData, CityData, RegionData, ClickLocationData } from "@/app/Get/dataTypes";
+import React from "react";
 
-export const RegionsTabs = () => {
+
+interface RegionsTabsProps {
+  dataCountries: {
+    currentPage: number;
+    lastPage: number;
+    data: CountryData[];
+    total: number;
+  };
+  setDataCountries: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: CountryData[];
+      total: number;
+    }>
+  >;
+  dataCity: {
+    currentPage: number;
+    lastPage: number;
+    data: CityData[];
+    total: number;
+  }
+  setDataCity: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: CityData[];
+      total: number;
+    }>
+  >;
+  dataRegion: {
+    currentPage: number;
+    lastPage: number;
+    data: RegionData[];
+    total: number;
+  }
+  setDataRegion: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: RegionData[];
+      total: number;
+    }>
+  >;
+  dataContinents: {
+    currentPage: number;
+    lastPage: number;
+    data: ClickLocationData[];
+    total: number;
+  }
+  setDataContinents: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: ClickLocationData[];
+      total: number;
+    }>
+  >;
+  isClickShortLink: boolean;
+}
+
+export const RegionsTabs: React.FC<RegionsTabsProps> = ({
+  dataCountries,
+  setDataCountries,
+  dataCity,
+  setDataCity,
+  dataRegion,
+  setDataRegion,
+  dataContinents,
+  setDataContinents,
+  isClickShortLink,
+}) => {
   return (
     <Tabs defaultValue="country">
       <Card className="bg-neutral-800 border border-neutral-800 text-white h-max">
@@ -39,22 +112,22 @@ export const RegionsTabs = () => {
         </CardHeader>
         <TabsContent value="country">
           <CardContent>
-            <Countries />
+            <Countries data={dataCountries} setData={setDataCountries} isClickShortLink={isClickShortLink} />
           </CardContent>
         </TabsContent>
         <TabsContent value="city">
           <CardContent>
-            <Cities />
+            <Cities data={dataCity} setData={setDataCity} isClickShortLink={isClickShortLink} />
           </CardContent>
         </TabsContent>
         <TabsContent value="region">
           <CardContent>
-            <Regions />
+            <Regions data={dataRegion} setData={setDataRegion} isClickShortLink={isClickShortLink} />
           </CardContent>
         </TabsContent>
         <TabsContent value="continent">
           <CardContent>
-            <Continents />
+            <Continents data={dataContinents} setData={setDataContinents} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
       </Card>

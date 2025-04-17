@@ -2,24 +2,24 @@
 import { useGetClicksBrowsers } from "@/hooks/useGetClicksBrowsers";
 import { Button } from "@/components/ui/button";
 import { clientApiRequest } from "@/services/clientApiRequest";
-import { ApiResponse, isPaginatedResponse } from "@/app/Get/dataTypes";
+import { ApiResponse, isPaginatedResponse, BrowserData } from "@/app/Get/dataTypes";
 import React, { useState, useEffect } from "react";
 
 // Pagination component (identical to Cities component)
-const Pagination = ({ 
-  currentPage, 
-  lastPage, 
-  onPageChange 
-}: { 
-  currentPage: number; 
-  lastPage: number; 
+const Pagination = ({
+  currentPage,
+  lastPage,
+  onPageChange
+}: {
+  currentPage: number;
+  lastPage: number;
   onPageChange: (page: number) => void;
 }) => {
   // Create array of page numbers to show
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
     const maxDisplayed = 5; // Maximum number of page buttons to display
-    
+
     // Logic to display appropriate page numbers
     if (lastPage <= maxDisplayed) {
       // If we have few pages, show all of them
@@ -30,32 +30,32 @@ const Pagination = ({
       // Complex logic for many pages
       // Always include page 1
       pageNumbers.push(1);
-      
+
       // Calculate start and end of displayed range
       const rangeStart = Math.max(2, currentPage - 1);
       const rangeEnd = Math.min(lastPage - 1, currentPage + 1);
-      
+
       // Add ellipsis after page 1 if needed
       if (rangeStart > 2) {
         pageNumbers.push("ellipsis1");
       }
-      
+
       // Add pages in range
       for (let i = rangeStart; i <= rangeEnd; i++) {
         pageNumbers.push(i);
       }
-      
+
       // Add ellipsis before last page if needed
       if (rangeEnd < lastPage - 1) {
         pageNumbers.push("ellipsis2");
       }
-      
+
       // Always include last page if it's not already included
       if (lastPage !== 1) {
         pageNumbers.push(lastPage);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -81,7 +81,7 @@ const Pagination = ({
               </span>
             );
           }
-          
+
           return (
             <Button
               key={index}
@@ -112,48 +112,55 @@ const Pagination = ({
   );
 };
 
-// Define specific type for browser data
-interface BrowserData {
-  id: number;
-  browser?: string;
-  total_clicks: number;
-}
-
-export const Browsers = () => {
-  const { data: initialData, isLoading: initialLoading } = useGetClicksBrowsers();
-  const [loading, setLoading] = useState(false);
-  const [paginationData, setPaginationData] = useState<{
+interface BrowserProps {
+  data: {
     currentPage: number;
     lastPage: number;
     data: BrowserData[];
     total: number;
-  }>({
-    currentPage: 1,
-    lastPage: 1,
-    data: [],
-    total: 0
-  });
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: BrowserData[];
+      total: number;
+    }>
+  >;
+  isClickShortLink: boolean;
+}
+
+export const Browsers: React.FC<BrowserProps> = ({
+  data,
+  setData,
+  isClickShortLink
+}) => {
+  const { data: initialData, isLoading: initialLoading } = useGetClicksBrowsers();
+  const [loading, setLoading] = useState(false);
+
 
   // Initialize pagination data from initial fetch
   useEffect(() => {
-    if (initialData?.data) {
-      // Use the isPaginatedResponse type guard
-      if (!isPaginatedResponse(initialData.data)) {
-        // Handle non-paginated response (for backward compatibility)
-        setPaginationData({
-          currentPage: 1,
-          lastPage: 1,
-          data: initialData.data as BrowserData[],
-          total: initialData.data.length
-        });
-      } else {
-        // Handle paginated response
-        setPaginationData({
-          currentPage: initialData.data.current_page,
-          lastPage: initialData.data.last_page,
-          data: initialData.data.data as BrowserData[],
-          total: initialData.data.total
-        });
+    if (!isClickShortLink) {
+      if (initialData?.data) {
+        // Use the isPaginatedResponse type guard
+        if (!isPaginatedResponse(initialData.data)) {
+          // Handle non-paginated response (for backward compatibility)
+          setData({
+            currentPage: 1,
+            lastPage: 1,
+            data: initialData.data as BrowserData[],
+            total: initialData.data.length
+          });
+        } else {
+          // Handle paginated response
+          setData({
+            currentPage: initialData.data.current_page,
+            lastPage: initialData.data.last_page,
+            data: initialData.data.data as BrowserData[],
+            total: initialData.data.total
+          });
+        }
       }
     }
   }, [initialData]);
@@ -172,7 +179,7 @@ export const Browsers = () => {
       if (response.data) {
         if (isPaginatedResponse(response.data)) {
           // It's a paginated response
-          setPaginationData({
+          setData({
             currentPage: response.data.current_page,
             lastPage: response.data.last_page,
             data: response.data.data,
@@ -180,7 +187,7 @@ export const Browsers = () => {
           });
         } else {
           // It's a direct array
-          setPaginationData({
+          setData({
             currentPage: 1,
             lastPage: 1,
             data: response.data,
@@ -202,16 +209,16 @@ export const Browsers = () => {
 
   // Determine if we're loading
   const isLoading = initialLoading || loading;
-  
+
   return (
     <div>
       {isLoading ? (
         <div className="py-4 flex justify-center">
           <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
         </div>
-      ) : paginationData.data.length > 0 ? (
+      ) : data.data.length > 0 ? (
         <>
-          {paginationData.data.map((item, index) => (
+          {data.data.map((item, index) => (
             <div
               key={index}
               className="bg-neutral-700 text-white py-2 px-3 rounded-md flex w-full justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
@@ -222,12 +229,12 @@ export const Browsers = () => {
               </span>
             </div>
           ))}
-          
+
           {/* Pagination - only show if more than one page */}
-          {paginationData.lastPage > 1 && (
+          {data.lastPage > 1 && (
             <Pagination
-              currentPage={paginationData.currentPage}
-              lastPage={paginationData.lastPage}
+              currentPage={data.currentPage}
+              lastPage={data.lastPage}
               onPageChange={handlePageChange}
             />
           )}

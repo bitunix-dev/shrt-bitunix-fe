@@ -8,7 +8,7 @@ export interface LinkPreview {
 // URL data structure
 export interface UrlData {
   id?: number;
-  destination_url: string; 
+  destination_url: string;
   short_link?: string;
   tags: string[] | {
     id: number;
@@ -19,7 +19,7 @@ export interface UrlData {
       url_id: number;
       tag_id: number;
     };
-  }[]; 
+  }[];
   source: string | null;
   medium: string | null;
   campaign: string | null;
@@ -65,6 +65,19 @@ export interface ClickUTMData {
   total_clicks: number;
 }
 
+export interface CountryData extends ClickLocationData {
+  country: string;
+  country_flag: string;
+  total_clicks: number;
+}
+
+// Define specific type for region data
+export interface RegionData extends ClickLocationData {
+  region: string;
+  country_flag: string;
+  total_clicks: number;
+}
+
 // Pagination metadata structure
 export interface PaginationMeta {
   current_page: number;
@@ -83,6 +96,59 @@ export interface PaginationMeta {
     label: string;
     active: boolean;
   }[];
+}
+
+export interface CityData extends ClickLocationData {
+  city: string;
+  country_flag: string;
+  total_clicks: number;
+}
+
+// Define specific type for browser data
+export interface BrowserData {
+  id: number;
+  browser?: string;
+  total_clicks: number;
+}
+
+export interface DeviceData {
+  id: number;
+  device?: string;
+  total_clicks: number;
+}
+
+// Define specific type for campaign data
+export interface CampaignData {
+  id: number;
+  campaign?: string;
+  total_clicks: number;
+}
+
+export interface ContentData {
+  id: number;
+  content?: string;
+  total_clicks: number;
+}
+
+// Define specific type for medium data
+export interface MediumData {
+  id: number;
+  medium?: string;
+  total_clicks: number;
+}
+
+// Define specific type for term data
+export interface TermData {
+  id: number;
+  term?: string;
+  total_clicks: number;
+}
+
+// Define specific type for source data
+export interface SourceData {
+  id: number;
+  source?: string;
+  total_clicks: number;
 }
 
 // Paginated data structure
@@ -106,10 +172,33 @@ export interface PaginatedData<T> {
   total: number;
 }
 
+export interface dataByTabsShrtLink<T> {
+  countries: T[];
+}
+
 // API Response that can handle both direct arrays and paginated data
 export interface ApiResponse<T = any> {
   status: number;
   data: T[] | PaginatedData<T>;
+}
+
+export interface ApiResponseForTabsShrtLink<T = any> {
+  status: number;
+  data: {
+    analytics: {
+      countries: [];
+      cities: [];
+      regions: [];
+      continents: [];
+      browsers: [];
+      devices: [];
+      campaigns: [];
+      contents: [];
+      mediums: [];
+      sources: [];
+      terms: [];
+    }
+  };
 }
 
 // Type guard to check if a response is paginated

@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { clientApiRequest } from "@/services/clientApiRequest";
 import {
   ApiResponse,
-  ClickLocationData,
-  PaginatedData,
   isPaginatedResponse,
+  CityData,
 } from "@/app/Get/dataTypes";
 import Image from "next/image"; // Import Next.js Image component
 import React, { useState, useEffect } from "react";
@@ -119,47 +118,56 @@ const Pagination = ({
 };
 
 // Define specific type for city data
-interface CityData extends ClickLocationData {
-  city: string;
-  country_flag: string;
-  total_clicks: number;
-}
 
-export const Cities = () => {
-  const { data: initialData, isLoading: initialLoading } = useGetClicksCities();
-  const [loading, setLoading] = useState(false);
-  const [paginationData, setPaginationData] = useState<{
+interface CitiesProps {
+  data: {
     currentPage: number;
     lastPage: number;
     data: CityData[];
     total: number;
-  }>({
-    currentPage: 1,
-    lastPage: 1,
-    data: [],
-    total: 0,
-  });
+  };
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      currentPage: number;
+      lastPage: number;
+      data: CityData[];
+      total: number;
+    }>
+  >;
+  isClickShortLink: boolean;
+}
+
+
+export const Cities: React.FC<CitiesProps> = ({
+  data,
+  setData,
+  isClickShortLink,
+}) => {
+  const { data: initialData, isLoading: initialLoading } = useGetClicksCities();
+  const [loading, setLoading] = useState(false);
 
   // Initialize pagination data from initial fetch
   useEffect(() => {
-    if (initialData?.data) {
-      // Use the isPaginatedResponse type guard
-      if (!isPaginatedResponse(initialData.data)) {
-        // Handle non-paginated response (for backward compatibility)
-        setPaginationData({
-          currentPage: 1,
-          lastPage: 1,
-          data: initialData.data as CityData[],
-          total: initialData.data.length,
-        });
-      } else {
-        // Handle paginated response
-        setPaginationData({
-          currentPage: initialData.data.current_page,
-          lastPage: initialData.data.last_page,
-          data: initialData.data.data as CityData[],
-          total: initialData.data.total,
-        });
+    if (!isClickShortLink) {
+      if (initialData?.data) {
+        // Use the isPaginatedResponse type guard
+        if (!isPaginatedResponse(initialData.data)) {
+          // Handle non-paginated response (for backward compatibility)
+          setData({
+            currentPage: 1,
+            lastPage: 1,
+            data: initialData.data as CityData[],
+            total: initialData.data.length,
+          });
+        } else {
+          // Handle paginated response
+          setData({
+            currentPage: initialData.data.current_page,
+            lastPage: initialData.data.last_page,
+            data: initialData.data.data as CityData[],
+            total: initialData.data.total,
+          });
+        }
       }
     }
   }, [initialData]);
@@ -178,7 +186,7 @@ export const Cities = () => {
       if (response.data) {
         if (isPaginatedResponse(response.data)) {
           // It's a paginated response
-          setPaginationData({
+          setData({
             currentPage: response.data.current_page,
             lastPage: response.data.last_page,
             data: response.data.data,
@@ -186,7 +194,7 @@ export const Cities = () => {
           });
         } else {
           // It's a direct array
-          setPaginationData({
+          setData({
             currentPage: 1,
             lastPage: 1,
             data: response.data,
@@ -215,9 +223,9 @@ export const Cities = () => {
         <div className="py-4 flex justify-center">
           <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[var(--bitunix)]"></div>
         </div>
-      ) : paginationData.data.length > 0 ? (
+      ) : data.data.length > 0 ? (
         <>
-          {paginationData.data.map((item, index) => (
+          {data.data.map((item, index) => (
             <div
               key={index}
               className="bg-neutral-700 text-white py-2 px-3 rounded-md w-full flex justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
@@ -240,10 +248,10 @@ export const Cities = () => {
           ))}
 
           {/* Pagination - only show if more than one page */}
-          {paginationData.lastPage > 1 && (
+          {data.lastPage > 1 && (
             <Pagination
-              currentPage={paginationData.currentPage}
-              lastPage={paginationData.lastPage}
+              currentPage={data.currentPage}
+              lastPage={data.lastPage}
               onPageChange={handlePageChange}
             />
           )}

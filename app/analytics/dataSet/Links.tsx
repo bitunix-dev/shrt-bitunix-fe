@@ -5,7 +5,23 @@ import { Button } from "@/components/ui/button";
 // import { useGetUrls } from "@/hooks/useGetUrls";
 import { useGetClicksShortUrl } from "@/hooks/useGetClicksShortUrl";
 import { clientApiRequest } from "@/services/clientApiRequest";
-import { ApiResponse, UrlData, PaginatedData, isPaginatedResponse } from "@/app/Get/dataTypes";
+import { 
+  ApiResponse, 
+  UrlData, 
+  PaginatedData, 
+  CountryData, 
+  CityData,
+  RegionData,
+  ClickLocationData,
+  BrowserData,
+  DeviceData,
+  CampaignData,
+  ContentData,
+  MediumData,
+  SourceData,
+  TermData,
+} from "@/app/Get/dataTypes";
+import { handleGetSpesifikShrtLink } from "./handleGetSpesifikShrtLink";
 import Image from "next/image";
 import * as React from "react";
 
@@ -17,16 +33,16 @@ interface PaginationProps {
 }
 
 // Pagination component
-const Pagination: React.FC<PaginationProps> = ({ 
-  currentPage, 
-  lastPage, 
-  onPageChange 
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  lastPage,
+  onPageChange
 }) => {
   // Create array of page numbers to show
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
     const maxDisplayed = 5; // Maximum number of page buttons to display
-    
+
     // Logic to display appropriate page numbers
     if (lastPage <= maxDisplayed) {
       // If we have few pages, show all of them
@@ -37,32 +53,32 @@ const Pagination: React.FC<PaginationProps> = ({
       // Complex logic for many pages
       // Always include page 1
       pageNumbers.push(1);
-      
+
       // Calculate start and end of displayed range
       const rangeStart = Math.max(2, currentPage - 1);
       const rangeEnd = Math.min(lastPage - 1, currentPage + 1);
-      
+
       // Add ellipsis after page 1 if needed
       if (rangeStart > 2) {
         pageNumbers.push("ellipsis1");
       }
-      
+
       // Add pages in range
       for (let i = rangeStart; i <= rangeEnd; i++) {
         pageNumbers.push(i);
       }
-      
+
       // Add ellipsis before last page if needed
       if (rangeEnd < lastPage - 1) {
         pageNumbers.push("ellipsis2");
       }
-      
+
       // Always include last page if it's not already included
       if (lastPage !== 1) {
         pageNumbers.push(lastPage);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -88,7 +104,7 @@ const Pagination: React.FC<PaginationProps> = ({
               </span>
             );
           }
-          
+
           return (
             <Button
               key={index}
@@ -124,7 +140,90 @@ interface FaviconWithFallbackProps {
   url: string | URL;
 }
 
-export const Links = () => {
+interface LinksProps {
+  setDataCountries: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: CountryData[];
+    total: number;
+  }>>;
+  setDataCity: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: CityData[];
+    total: number;
+  }>>;
+  setDataRegion: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: RegionData[];
+    total: number;
+  }>>;
+  setDataContinents: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: ClickLocationData[];
+    total: number;
+  }>>;
+  setDataBrowser: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: BrowserData[];
+    total: number;
+  }>>;
+  setDataDevice: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: DeviceData[];
+    total: number;
+  }>>;
+  setDataCampaign: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: CampaignData[];
+    total: number;
+  }>>;
+  setDataContent: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: ContentData[];
+    total: number;
+  }>>;
+  setDataMedium: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: MediumData[];
+    total: number;
+  }>>;
+  setDataSource: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: SourceData[];
+    total: number;
+  }>>;
+  setDataTerms: React.Dispatch<React.SetStateAction<{
+    currentPage: number;
+    lastPage: number;
+    data: TermData[];
+    total: number;
+  }>>;
+  setIsClickShortLink: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const Links: React.FC<LinksProps> = ({
+  setDataCountries,
+  setDataCity,
+  setDataRegion,
+  setDataContinents,
+  setDataBrowser,
+  setDataDevice,
+  setDataCampaign,
+  setDataContent,
+  setDataMedium,
+  setDataSource,
+  setDataTerms,
+  setIsClickShortLink,
+}) => {
   const { data: initialData, isLoading: initialLoading } = useGetClicksShortUrl();
   const [loading, setLoading] = React.useState(false);
   const [paginationData, setPaginationData] = React.useState<{
@@ -235,7 +334,7 @@ export const Links = () => {
 
   // Determine if we're loading
   const isLoading = initialLoading || loading;
-  
+
   return (
     <>
       <Tabs defaultValue="shortLinks">
@@ -265,8 +364,24 @@ export const Links = () => {
               ) : paginationData.data.length > 0 ? (
                 paginationData.data.map((item) => (
                   <div
+                    onClick={() =>
+                      handleGetSpesifikShrtLink(item.short_link as string, {
+                        setDataCountries,
+                        setDataCity,
+                        setDataRegion,
+                        setDataContinents,
+                        setDataBrowser,
+                        setDataDevice,
+                        setDataCampaign,
+                        setDataContent,
+                        setDataMedium,
+                        setDataSource,
+                        setDataTerms,
+                        setIsClickShortLink
+                      })
+                    }
                     key={item.id}
-                    className="bg-neutral-700 text-white py-2 px-3 rounded-md flex items-center mb-2 justify-between box-border transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
+                    className="bg-neutral-700 cursor-pointer text-white py-2 px-3 rounded-md flex items-center mb-2 justify-between box-border transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
                   >
                     <div className="flex items-center w-[60%]">
                       <FaviconWithFallback url={item.destination_url} />
@@ -281,7 +396,7 @@ export const Links = () => {
               ) : (
                 <p>No short links available</p>
               )}
-              
+
               {/* Pagination */}
               {paginationData.lastPage > 1 && (
                 <Pagination
@@ -315,7 +430,7 @@ export const Links = () => {
                           : item.destination_url}
                       </div>
                     </span>
-                    <span className="font-bold">
+                    <span className="font-bold">S
                       {Number(item.clicks).toLocaleString("en-US")} clicks
                     </span>
                   </div>
@@ -323,7 +438,7 @@ export const Links = () => {
               ) : (
                 <p>No destination URLs available</p>
               )}
-              
+
               {/* Pagination (also shown in destination URL tab) */}
               {paginationData.lastPage > 1 && (
                 <Pagination
