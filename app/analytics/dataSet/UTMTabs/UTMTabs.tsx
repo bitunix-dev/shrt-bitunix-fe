@@ -147,7 +147,7 @@ export const UTMTabs:React.FC<UTMTabsProps> = ({
             <Campaign data={dataCampaign} setData={setDataCampaign} isClickShortLink={isClickShortLink}/>
           </CardContent>
         </TabsContent>
-        <TabsContent value="term">s
+        <TabsContent value="term">
           <CardContent>
             <Term data={dataTerms} setData={setDataTerms} isClickShortLink={isClickShortLink}/>
           </CardContent>
