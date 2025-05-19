@@ -14,21 +14,27 @@ export const clientApiRequest = async <T>({
   usePublicRoute = false, // Default: false (menggunakan route terautentikasi)
 }: ApiClientParams): Promise<T> => {
   try {
-    // Buat query string dari params (jika ada)
-    const queryString = params
-      ? Object.entries(params)
-          .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-          .join("&")
-      : "";
-    
     // Tentukan route berdasarkan usePublicRoute
     const routePath = usePublicRoute ? "public" : "proxy";
     
-    // Buat URL ke API route yang sesuai di Next.js
-    const baseUrl = `${process.env.NEXT_PUBLIC_API_URL_INTERNAL}/api/${routePath}?endpoint=${endpoint}`;
+    // Buat base URL dengan endpoint
+    const baseUrl = `${process.env.NEXT_PUBLIC_API_URL_INTERNAL}/api/${routePath}`;
     
-    // Tambahkan query string jika ada
-    const fullUrl = queryString ? `${baseUrl}&${queryString}` : baseUrl;
+    // Buat URLSearchParams untuk menangani query string dengan benar
+    const searchParams = new URLSearchParams();
+    
+    // Tambahkan endpoint sebagai parameter
+    searchParams.append('endpoint', endpoint);
+    
+    // Tambahkan params jika ada
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        searchParams.append(key, String(value));
+      });
+    }
+    
+    // Buat URL lengkap dengan query string
+    const fullUrl = `${baseUrl}?${searchParams.toString()}`;
 
     console.log(`Fetching (${usePublicRoute ? "public" : "authenticated"} route):`, fullUrl); // Debug URL
 

@@ -9,6 +9,33 @@ import {
 } from "@/app/Get/dataTypes";
 import React, { useState, useEffect } from "react";
 
+// Function to get date 2 weeks ago in Dubai timezone
+const getTwoWeeksAgoInDubai = (): string => {
+  const now = new Date();
+  const twoWeeksAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(twoWeeksAgo.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
+// Function to get current date in Dubai timezone
+const getCurrentDateInDubai = (): string => {
+  const now = new Date();
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(now.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
 // Pagination component
 const Pagination = ({
   currentPage,
@@ -86,9 +113,6 @@ const Pagination = ({
   );
 };
 
-// CountryData type
-
-
 // Countries Props
 interface CountriesProps {
   data: {
@@ -142,10 +166,17 @@ export const Countries: React.FC<CountriesProps> = ({
     setLoading(true);
     if (!isClickShortLink) {
       try {
+        const startDate = getTwoWeeksAgoInDubai();
+        const endDate = getCurrentDateInDubai();
+        
         const response = await clientApiRequest<ApiResponse<CountryData>>({
           endpoint: "analytics/countries",
           method: "GET",
-          params: { page },
+          params: { 
+            page,
+            start_date: startDate,
+            end_date: endDate
+          },
         });
 
         if (response.data) {

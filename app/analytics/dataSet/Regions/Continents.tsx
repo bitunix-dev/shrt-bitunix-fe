@@ -8,8 +8,35 @@ import {
   isPaginatedResponse,
   ClickLocationData,
 } from "@/app/Get/dataTypes";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
+
+// Function to get date 2 weeks ago in Dubai timezone
+const getTwoWeeksAgoInDubai = (): string => {
+  const now = new Date();
+  const twoWeeksAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(twoWeeksAgo.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
+// Function to get current date in Dubai timezone
+const getCurrentDateInDubai = (): string => {
+  const now = new Date();
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(now.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
 
 // Pagination component
 const Pagination = ({
@@ -38,8 +65,8 @@ const Pagination = ({
       pageNumbers.push(1);
 
       // Calculate start and end of displayed range
-      const rangeStart = Math.max(2, currentPage - 1); // Changed from let to const
-      const rangeEnd = Math.min(lastPage - 1, currentPage + 1); // Changed from let to const
+      const rangeStart = Math.max(2, currentPage - 1);
+      const rangeEnd = Math.min(lastPage - 1, currentPage + 1);
 
       // Add ellipsis after page 1 if needed
       if (rangeStart > 2) {
@@ -118,7 +145,6 @@ const Pagination = ({
   );
 };
 
-
 interface ContinentsProps {
   data: {
     currentPage: number;
@@ -145,7 +171,6 @@ export const Continents: React.FC<ContinentsProps> = ({
   const { data: initialData, isLoading: initialLoading } = useGetClicksContinent();
   const [loading, setLoading] = useState(false);
 
-
   // Initialize pagination data from initial fetch
   useEffect(() => {
     if (!isClickShortLink) {
@@ -171,42 +196,51 @@ export const Continents: React.FC<ContinentsProps> = ({
         }
       }
     }
-  }, [initialData]);
+  }, [initialData, setData]);
 
   // Fetch data with pagination
   const fetchData = async (page: number) => {
     setLoading(true);
-    try {
-      const response = await clientApiRequest<ApiResponse<ClickLocationData>>({
-        endpoint: "analytics/continents",
-        method: "GET",
-        params: { page }
-      });
+    if (!isClickShortLink) {
+      try {
+        const startDate = getTwoWeeksAgoInDubai();
+        const endDate = getCurrentDateInDubai();
+        
+        const response = await clientApiRequest<ApiResponse<ClickLocationData>>({
+          endpoint: "analytics/continents",
+          method: "GET",
+          params: { 
+            page,
+            start_date: startDate,
+            end_date: endDate
+          }
+        });
 
-      // Use type guard to handle different response formats
-      if (response.data) {
-        if (isPaginatedResponse(response.data)) {
-          // It's a paginated response
-          setData({
-            currentPage: response.data.current_page,
-            lastPage: response.data.last_page,
-            data: response.data.data,
-            total: response.data.total
-          });
-        } else {
-          // It's a direct array
-          setData({
-            currentPage: 1,
-            lastPage: 1,
-            data: response.data,
-            total: response.data.length
-          });
+        // Use type guard to handle different response formats
+        if (response.data) {
+          if (isPaginatedResponse(response.data)) {
+            // It's a paginated response
+            setData({
+              currentPage: response.data.current_page,
+              lastPage: response.data.last_page,
+              data: response.data.data,
+              total: response.data.total
+            });
+          } else {
+            // It's a direct array
+            setData({
+              currentPage: 1,
+              lastPage: 1,
+              data: response.data,
+              total: response.data.length
+            });
+          }
         }
+      } catch (error) {
+        console.error("Error fetching paginated data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching paginated data:", error);
-    } finally {
-      setLoading(false);
     }
   };
 

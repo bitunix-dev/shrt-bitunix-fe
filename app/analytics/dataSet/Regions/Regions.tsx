@@ -7,8 +7,34 @@ import {
   RegionData,
   isPaginatedResponse,
 } from "@/app/Get/dataTypes";
-import Image from "next/image"; // Import Next.js Image component
 import React, { useState, useEffect } from "react";
+
+// Function to get date 2 weeks ago in Dubai timezone
+const getTwoWeeksAgoInDubai = (): string => {
+  const now = new Date();
+  const twoWeeksAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(twoWeeksAgo.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
+// Function to get current date in Dubai timezone
+const getCurrentDateInDubai = (): string => {
+  const now = new Date();
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(now.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
 
 // Pagination component
 const Pagination = ({
@@ -37,8 +63,8 @@ const Pagination = ({
       pageNumbers.push(1);
 
       // Calculate start and end of displayed range
-      const rangeStart = Math.max(2, currentPage - 1); // Changed from let to const
-      const rangeEnd = Math.min(lastPage - 1, currentPage + 1); // Changed from let to const
+      const rangeStart = Math.max(2, currentPage - 1);
+      const rangeEnd = Math.min(lastPage - 1, currentPage + 1);
 
       // Add ellipsis after page 1 if needed
       if (rangeStart > 2) {
@@ -117,8 +143,6 @@ const Pagination = ({
   );
 };
 
-
-
 interface RegionsProps {
   data: {
     currentPage: number;
@@ -170,42 +194,51 @@ export const Regions: React.FC<RegionsProps> = ({
         }
       }
     }
-  }, [initialData]);
+  }, [initialData, setData]);
 
   // Fetch data with pagination
   const fetchData = async (page: number) => {
     setLoading(true);
-    try {
-      const response = await clientApiRequest<ApiResponse<RegionData>>({
-        endpoint: "analytics/regions",
-        method: "GET",
-        params: { page },
-      });
+    if (!isClickShortLink) {
+      try {
+        const startDate = getTwoWeeksAgoInDubai();
+        const endDate = getCurrentDateInDubai();
+        
+        const response = await clientApiRequest<ApiResponse<RegionData>>({
+          endpoint: "analytics/regions",
+          method: "GET",
+          params: { 
+            page,
+            start_date: startDate,
+            end_date: endDate
+          },
+        });
 
-      // Use type guard to handle different response formats
-      if (response.data) {
-        if (isPaginatedResponse(response.data)) {
-          // It's a paginated response
-          setData({
-            currentPage: response.data.current_page,
-            lastPage: response.data.last_page,
-            data: response.data.data,
-            total: response.data.total,
-          });
-        } else {
-          // It's a direct array
-          setData({
-            currentPage: 1,
-            lastPage: 1,
-            data: response.data,
-            total: response.data.length,
-          });
+        // Use type guard to handle different response formats
+        if (response.data) {
+          if (isPaginatedResponse(response.data)) {
+            // It's a paginated response
+            setData({
+              currentPage: response.data.current_page,
+              lastPage: response.data.last_page,
+              data: response.data.data,
+              total: response.data.total,
+            });
+          } else {
+            // It's a direct array
+            setData({
+              currentPage: 1,
+              lastPage: 1,
+              data: response.data,
+              total: response.data.length,
+            });
+          }
         }
+      } catch (error) {
+        console.error("Error fetching paginated region data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching paginated region data:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -227,7 +260,7 @@ export const Regions: React.FC<RegionsProps> = ({
         <>
           {data.data.map((item, index) => (
             <div
-              key={index}
+              key={item.region + index}
               className="bg-neutral-700 text-white py-2 px-3 rounded-md w-full flex justify-between mb-2 transition-all duration-300 ease-in-out hover:border-l-4 hover:border-lime-500"
             >
               <div className="flex items-center">

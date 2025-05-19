@@ -2,12 +2,46 @@ import { useQuery } from "@tanstack/react-query";
 import { clientApiRequest } from "@/services/clientApiRequest";
 import { ApiResponse, ClickLocationData } from "@/app/Get/dataTypes";
 
+// Function to get date 2 weeks ago in Dubai timezone
+const getTwoWeeksAgoInDubai = (): string => {
+  const now = new Date();
+  const twoWeeksAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(twoWeeksAgo.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
+// Function to get current date in Dubai timezone
+const getCurrentDateInDubai = (): string => {
+  const now = new Date();
+  
+  // Convert to Dubai timezone (UTC+4)
+  const dubaiTime = new Date(now.toLocaleString("en-US", {
+    timeZone: "Asia/Dubai"
+  }));
+  
+  // Format as YYYY-MM-DD
+  return dubaiTime.toISOString().split('T')[0];
+};
+
 const fetchClicksContinents = async (): Promise<ApiResponse<ClickLocationData>> => {
   try {
+    const startDate = getTwoWeeksAgoInDubai();
+    const endDate = getCurrentDateInDubai();
+    
     return await clientApiRequest<ApiResponse<ClickLocationData>>({
       method: "GET",
       endpoint: "analytics/continents",
-      params: { page: 1 } // Start with page 1 by default
+      params: { 
+        page: 1,
+        start_date: startDate,
+        end_date: endDate
+      }
     });
   } catch (error) {
     console.error("Error fetching continent data:", error);
