@@ -5,12 +5,12 @@ import React, { useEffect, useState } from "react";
 import QRCodeGenerator from "@/components/qrCode/QrCode";
 import { FormsUTM } from "../UTM/Forms";
 import { ComboBoxForTags } from "@/components/Combobox/ComboboxForTags";
-import { Tags } from "lucide-react";
+import { VipCodeData } from "@/app/Get/dataTypes";
 
-interface Option {
-  id: string;
-  name: string;
-}
+// interface Option {
+//   id: string;
+//   name: string;
+// }
 
 interface FormsProps {
   dataTags: any;
@@ -36,6 +36,7 @@ interface FormsProps {
   setVipCode: React.Dispatch<React.SetStateAction<string>>;
   sourceOptions: { id: string; name: string }[];
   mediumOptions: { id: string; name: string }[];
+  vipCodeOptions: VipCodeData[];
 }
 
 export const Forms: React.FC<FormsProps> = ({
@@ -62,6 +63,7 @@ export const Forms: React.FC<FormsProps> = ({
   setVipCode,
   sourceOptions,
   mediumOptions,
+  vipCodeOptions
 }) => {
   const [isCustomShortLink, setIsCustomShortLink] = useState(false);
   const [validationError, setValidationError] = useState("");
@@ -175,6 +177,7 @@ export const Forms: React.FC<FormsProps> = ({
               setDestinationUrl={setDestinationUrl}
               sourceOptions={sourceOptions}
               mediumOptions={mediumOptions}
+              vipCodeOptions={vipCodeOptions}
             />
           </div>
         </div>

@@ -16,7 +16,7 @@ const fetchUrls = async (): Promise<ApiResponse<VipCodeData>> => {
 };
 
 // Hook to fetch URL data
-export const useGetUrls = () => {
+export const useGetVipCode = () => {
   return useQuery<ApiResponse<VipCodeData>, Error>({
     queryKey: ["vip-codes"], // Unique key for caching
     queryFn: fetchUrls,

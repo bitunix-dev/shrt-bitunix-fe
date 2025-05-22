@@ -8,7 +8,7 @@ import { FormFooter } from "./FormsFooter";
 import { useGetTags } from "@/hooks/useGetTags";
 import { useGetSources } from "@/hooks/useGetSource";
 import { useGetMediums } from "@/hooks/useGetMedium";
-
+import { useGetVipCode } from "@/hooks/useGetVipCode";
 interface CreateProps {
     refetch: () => void; // ✅ Tambahkan prop untuk refetch
 }
@@ -30,9 +30,11 @@ export const Create: React.FC<CreateProps> = ({
     const [vipCode, setVipCode] = useState<string>("")
     const [dataSource, setDataSource] = useState<any>([])
     const [dataMedium, setDataMedium] = useState<any>([])
+    const [dataVipCode, setDataVipCode] = useState<any>([])
     const { data: tagsData, refetch: refetchTags } = useGetTags();
     const { data: sourceData, refetch: refetchSources } = useGetSources();
     const { data: mediumData, refetch: refetchMediums } = useGetMediums();
+    const { data: vipCodeData, refetch: refetchVipCode } = useGetVipCode();
 
     useEffect(() => {
         if (tagsData) setData(tagsData);
@@ -45,6 +47,10 @@ export const Create: React.FC<CreateProps> = ({
     useEffect(() => {
         if (mediumData) setDataMedium(mediumData);
     }, [mediumData]);
+
+    useEffect(() => {
+        if(vipCodeData) setDataVipCode(vipCodeData)
+    }, [vipCodeData])
 
     const refetchAllData = async () => {
         await Promise.all([refetchTags(), refetchSources(), refetchMediums()]);
@@ -95,7 +101,8 @@ export const Create: React.FC<CreateProps> = ({
                     vipCode={vipCode}
                     setVipCode={setVipCode}
                     sourceOptions={dataSource?.data}
-                    mediumOptions={dataMedium?.data} />}
+                    mediumOptions={dataMedium?.data} 
+                    vipCodeOptions={dataVipCode?.data}/>}
                 BtnCreate={<BtnCreate setOpen={setOpen} refetch={data.refetch} />}
                 setOpen={setOpen}
                 open={open}

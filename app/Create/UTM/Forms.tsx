@@ -18,11 +18,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect } from "react";
+import { VipCodeData } from "@/app/Get/dataTypes";
 
 interface Option {
   id: string;
   name: string;
 }
+
 
 interface FormsProps {
   source: string;
@@ -43,6 +45,7 @@ interface FormsProps {
   setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
   sourceOptions: Option[];
   mediumOptions: Option[];
+  vipCodeOptions: VipCodeData[];
 }
 
 const normalizeText = (text: string) =>
@@ -67,6 +70,7 @@ export const FormsUTM: React.FC<FormsProps> = ({
   setDestinationUrl,
   sourceOptions,
   mediumOptions,
+  vipCodeOptions,
 }) => {
   useEffect(() => {
     if (!destinationUrl) return;
@@ -80,7 +84,7 @@ export const FormsUTM: React.FC<FormsProps> = ({
       if (term) params.set("utm_term", normalizeText(term));
       if (content) params.set("utm_content", normalizeText(content));
       if (referral) params.set("ref", normalizeText(referral));
-      if (vipCode) params.set("vipCode", normalizeText(vipCode))
+      if (vipCode) params.set("vipCode", vipCode) // Don't normalize vipCode since it's a specific code
 
       const newUrl = params.toString()
         ? `${url.origin}${url.pathname}?${params.toString()}`
@@ -130,15 +134,6 @@ export const FormsUTM: React.FC<FormsProps> = ({
       tooltip: "who referred the traffic",
       value: referral,
       setValue: setReferral,
-    },
-     {
-      id: "vip-code",
-      label: "Vip Code",
-      icon: <Crown className="w-4 h-4" />,
-      placeholder: "3yd78261",
-      tooltip: "a unique code given to exclusive users or partners",
-      value: vipCode,
-      setValue: setVipCode,
     },
   ];
 
@@ -212,6 +207,29 @@ export const FormsUTM: React.FC<FormsProps> = ({
             />
           </div>
         ))}
+        {/* VIP Code Select */}
+        <div className="flex">
+          <TooltipComponents
+            Label={
+              <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-r-0">
+                <Crown className="w-4 h-4" /> Vip Code
+              </div>
+            }
+            content="Select a unique code given to exclusive users or partners"
+          />
+          <Select value={vipCode} onValueChange={setVipCode}>
+            <SelectTrigger className="rounded-l-none border-l-0 w-full">
+              <SelectValue placeholder="Select VIP code (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              {vipCodeOptions.map((option) => (
+                <SelectItem key={option.id} value={option.partner_code}>
+                  {option.partner_name} - {option.partner_code}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </>
   );
