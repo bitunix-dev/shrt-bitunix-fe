@@ -27,6 +27,7 @@ export const Create: React.FC<CreateProps> = ({
     const [term, setTerm] = useState<string>("")
     const [content, setContent] = useState<string>("")
     const [referral, setReferral] = useState<string>("")
+    const [vipCode, setVipCode] = useState<string>("")
     const [dataSource, setDataSource] = useState<any>([])
     const [dataMedium, setDataMedium] = useState<any>([])
     const { data: tagsData, refetch: refetchTags } = useGetTags();
@@ -64,7 +65,8 @@ export const Create: React.FC<CreateProps> = ({
         "campaign": campaign,
         "term": term,
         "content": content,
-        "referral": referral
+        "referral": referral,
+        "vipCode": vipCode
     }
 
     return (
@@ -90,6 +92,8 @@ export const Create: React.FC<CreateProps> = ({
                     setContent={setContent}
                     referral={referral}
                     setReferral={setReferral}
+                    vipCode={vipCode}
+                    setVipCode={setVipCode}
                     sourceOptions={dataSource?.data}
                     mediumOptions={dataMedium?.data} />}
                 BtnCreate={<BtnCreate setOpen={setOpen} refetch={data.refetch} />}

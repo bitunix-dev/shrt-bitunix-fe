@@ -6,6 +6,7 @@ import {
   FolderSearch2,
   ScrollText,
   Gift,
+  Crown,
   ChevronDown,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,8 @@ interface FormsProps {
   setContent: React.Dispatch<React.SetStateAction<string>>;
   referral: string;
   setReferral: React.Dispatch<React.SetStateAction<string>>;
+  vipCode: string
+  setVipCode: React.Dispatch<React.SetStateAction<string>>;
   destinationUrl: string;
   setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
   sourceOptions: Option[];
@@ -58,6 +61,8 @@ export const FormsUTM: React.FC<FormsProps> = ({
   setContent,
   referral,
   setReferral,
+  vipCode,
+  setVipCode,
   destinationUrl,
   setDestinationUrl,
   sourceOptions,
@@ -75,6 +80,7 @@ export const FormsUTM: React.FC<FormsProps> = ({
       if (term) params.set("utm_term", normalizeText(term));
       if (content) params.set("utm_content", normalizeText(content));
       if (referral) params.set("ref", normalizeText(referral));
+      if (vipCode) params.set("vipCode", normalizeText(vipCode))
 
       const newUrl = params.toString()
         ? `${url.origin}${url.pathname}?${params.toString()}`
@@ -86,7 +92,7 @@ export const FormsUTM: React.FC<FormsProps> = ({
     } catch (error) {
       console.error("Error constructing URL:", error);
     }
-  }, [source, medium, campaign, term, content, referral]);
+  }, [source, medium, campaign, term, content, referral, vipCode]);
 
   const dataSet = [
     {
@@ -124,6 +130,15 @@ export const FormsUTM: React.FC<FormsProps> = ({
       tooltip: "who referred the traffic",
       value: referral,
       setValue: setReferral,
+    },
+     {
+      id: "vip-code",
+      label: "Vip Code",
+      icon: <Crown className="w-4 h-4" />,
+      placeholder: "3yd78261",
+      tooltip: "a unique code given to exclusive users or partners",
+      value: vipCode,
+      setValue: setVipCode,
     },
   ];
 

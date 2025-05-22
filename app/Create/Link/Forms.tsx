@@ -32,6 +32,8 @@ interface FormsProps {
   setContent: React.Dispatch<React.SetStateAction<string>>;
   referral: string;
   setReferral: React.Dispatch<React.SetStateAction<string>>;
+  vipCode: string
+  setVipCode: React.Dispatch<React.SetStateAction<string>>;
   sourceOptions: { id: string; name: string }[];
   mediumOptions: { id: string; name: string }[];
 }
@@ -56,6 +58,8 @@ export const Forms: React.FC<FormsProps> = ({
   setContent,
   referral,
   setReferral,
+  vipCode,
+  setVipCode,
   sourceOptions,
   mediumOptions,
 }) => {
@@ -118,9 +122,8 @@ export const Forms: React.FC<FormsProps> = ({
             <div className="flex">
               <ComboboxForLink />
               <Input
-                className={`rounded-l-none ${
-                  validationError ? "border-red-500" : ""
-                }`}
+                className={`rounded-l-none ${validationError ? "border-red-500" : ""
+                  }`}
                 id="short-link"
                 placeholder="Masukkan short link atau gunakan default"
                 value={shortLink}
@@ -166,6 +169,8 @@ export const Forms: React.FC<FormsProps> = ({
               setContent={setContent}
               referral={referral}
               setReferral={setReferral}
+              vipCode={vipCode}
+              setVipCode={setVipCode}
               destinationUrl={destinationUrl}
               setDestinationUrl={setDestinationUrl}
               sourceOptions={sourceOptions}

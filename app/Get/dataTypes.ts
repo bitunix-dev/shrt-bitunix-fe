@@ -151,6 +151,13 @@ export interface SourceData {
   total_clicks: number;
 }
 
+
+export interface VipCodeData {
+  id: number,
+  partner_name: string,
+  partner_code: string,
+}
+
 // Paginated data structure
 export interface PaginatedData<T> {
   current_page: number;
