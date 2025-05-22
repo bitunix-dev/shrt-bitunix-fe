@@ -10,7 +10,29 @@ interface QRCodeGeneratorProps {
 const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
   const { Canvas } = useQRCode();
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [canvasSize, setCanvasSize] = useState<number>(300);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Update canvas size based on container width
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (canvasContainerRef.current) {
+        const containerWidth = canvasContainerRef.current.offsetWidth;
+        // Set canvas size to container width with max limit
+        const newSize = Math.min(containerWidth, 400); // Max 400px
+        setCanvasSize(newSize);
+      }
+    };
+
+    // Initial size calculation
+    updateCanvasSize();
+
+    // Add resize listener
+    window.addEventListener('resize', updateCanvasSize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
 
   useEffect(() => {
     // After the QR code is rendered, capture the canvas and generate the image URL
@@ -19,7 +41,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
       const imageUrl = canvas.toDataURL("image/png");
       setQrCodeUrl(imageUrl); // Store the generated image URL
     }
-  }, [value]);
+  }, [value, canvasSize]);
 
   const handleDownload = () => {
     // Create a new canvas with 1080x1080 size for download
@@ -58,6 +80,13 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
           link.click();
         };
         logoImg.src = logo;
+      } else {
+        // If no logo, download immediately
+        const imageUrl = downloadCanvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = "qrcode-1080x1080.png";
+        link.click();
       }
     }
   };
@@ -66,14 +95,17 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
     return <p className="text-red-500">Error: QR Code value is required</p>;
   }
 
+  // Calculate logo size proportionally to canvas size
+  const logoSize = Math.floor(canvasSize * 0.23); // ~23% of canvas size
+
   return (
-    <div className="w-[300px] h-max" ref={canvasContainerRef}>
+    <div className="w-full max-w-md mx-auto" ref={canvasContainerRef}>
       {/* Generate QR Code */}
-      <div className="relative">
+      <div className="relative w-full">
         <Canvas
           text={value}
           options={{
-            width: 300, // Customize QR Code size
+            width: canvasSize, // Dynamic size based on container
             margin: 1,
             color: {
               dark: "#000000", // Dark color for QR code
@@ -88,8 +120,8 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
             <NextImage
               src="https://res.cloudinary.com/dilb4d364/image/upload/v1741247206/bitunix_icon-01_b9jsq4.png"
               alt="QR Code Logo"
-              width={70} // Customize logo size
-              height={70}
+              width={logoSize} // Responsive logo size
+              height={logoSize}
               className="rounded-b-md bg-white p-1" // Padding to ensure the logo does not overlap with QR code
             />
           </div>
@@ -99,7 +131,7 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ value, logo }) => {
       {/* Add download button */}
       <button
         onClick={handleDownload}
-        className="mt-4 px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2 mx-auto"
+        className="mt-4 w-full px-6 py-3 bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black rounded-md flex items-center justify-center space-x-2"
       >
         <svg
           className="w-5 h-5 text-black"

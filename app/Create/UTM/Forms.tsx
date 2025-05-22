@@ -6,10 +6,18 @@ import {
   FolderSearch2,
   ScrollText,
   Gift,
+  ChevronDown,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ComboBoxComponents } from "@/components/Combobox/ComboboxComponen";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect } from "react";
+
 interface Option {
   id: string;
   name: string;
@@ -30,9 +38,10 @@ interface FormsProps {
   setReferral: React.Dispatch<React.SetStateAction<string>>;
   destinationUrl: string;
   setDestinationUrl: React.Dispatch<React.SetStateAction<string>>;
-  sourceOptions: Option[]; // ✅ fix di sini
-  mediumOptions: Option[]; // ✅ fix di sini
+  sourceOptions: Option[];
+  mediumOptions: Option[];
 }
+
 const normalizeText = (text: string) =>
   text.trim().toLowerCase().replace(/\s+/g, "-");
 
@@ -121,22 +130,53 @@ export const FormsUTM: React.FC<FormsProps> = ({
   return (
     <>
       <div className="space-y-3">
-        {/* Source */}
-        <ComboBoxComponents
-          data={sourceOptions}
-          selectedData={source}
-          setSelectedData={setSource}
-          icon={<Globe className="w-4 h-4" />}
-          label="Source"
-        />
-        {/* Medium */}
-        <ComboBoxComponents
-          data={mediumOptions}
-          selectedData={medium}
-          setSelectedData={setMedium}
-          icon={<RadioTower className="w-4 h-4" />} // 🔁 pakai icon yang beda dari source
-          label="Medium"
-        />
+        {/* Source Select */}
+        <div className="flex">
+          <TooltipComponents
+            Label={
+              <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-r-0">
+                <Globe className="w-4 h-4" /> Source
+              </div>
+            }
+            content="Enter the source of the traffic"
+          />
+          <Select value={source} onValueChange={setSource}>
+            <SelectTrigger className="rounded-l-none border-l-0 w-full">
+              <SelectValue placeholder="Select source" />
+            </SelectTrigger>
+            <SelectContent>
+              {sourceOptions.map((option) => (
+                <SelectItem key={option.id} value={option.name}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Medium Select */}
+        <div className="flex">
+          <TooltipComponents
+            Label={
+              <div className="w-72 py-1 rounded-r-none px-3 flex items-center gap-2 rounded bg-neutral-900 border border-r-0">
+                <RadioTower className="w-4 h-4" /> Medium
+              </div>
+            }
+            content="Enter the medium of the traffic"
+          />
+          <Select value={medium} onValueChange={setMedium}>
+            <SelectTrigger className="rounded-l-none border-l-0 w-full">
+              <SelectValue placeholder="Select medium" />
+            </SelectTrigger>
+            <SelectContent>
+              {mediumOptions.map((option) => (
+                <SelectItem key={option.id} value={option.name}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Other fields */}
         {dataSet.map((item) => (
