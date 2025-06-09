@@ -6,26 +6,48 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("Proses logout: Menghapus token dari cookie");
+    console.log("Proses logout: Menghapus token dan data user dari cookie");
     
-    // Buat respons
+    // Buat respons JSON
     const response = NextResponse.json(
       { message: "Logout berhasil" },
       { status: 200 }
     );
     
-    // Hapus cookie token dengan mengatur expires ke waktu lampau
+    // Hapus cookie token
     response.cookies.set({
       name: "token",
       value: "",
-      expires: new Date(0), // Waktu lampau (1970-01-01)
+      expires: new Date(0),
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
+
+    // Hapus cookie userName
+    response.cookies.set({
+      name: "userName",
+      value: "",
+      expires: new Date(0),
+      path: "/",
+      httpOnly: false,           // sesuaikan dengan setelan awal
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    // Hapus cookie avatar
+    response.cookies.set({
+      name: "avatar",
+      value: "",
+      expires: new Date(0),
+      path: "/",
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
     
-    console.log("Token berhasil dihapus");
+    console.log("Token, userName, dan avatar berhasil dihapus");
     return response;
   } catch (error) {
     console.error("Error saat logout:", error);

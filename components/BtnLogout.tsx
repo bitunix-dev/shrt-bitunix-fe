@@ -17,16 +17,19 @@ import { logout } from "@/services/authServices";
 export function BtnLogout() {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      localStorage.removeItem('userName')
-      localStorage.removeItem('avatar')
-      router.push("/login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const handleLogout = async () => {
+  try {
+    await logout();
+
+    // Expire the cookies by setting them to a past date
+    document.cookie = "userName=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "avatar=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    router.push("/login");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <AlertDialog>
