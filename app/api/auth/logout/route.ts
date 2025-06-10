@@ -1,6 +1,5 @@
 // app/api/auth/logout/route.ts
 import { NextRequest, NextResponse } from "next/server";
-
 /**
  * Handler untuk proses logout dengan menghapus token dari cookie
  */
@@ -46,8 +45,9 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
+
     
-    console.log("Token, userName, dan avatar berhasil dihapus");
+    
     return response;
   } catch (error) {
     console.error("Error saat logout:", error);
