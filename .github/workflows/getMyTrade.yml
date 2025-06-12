@@ -1,0 +1,54 @@
+name: Deployment of shorten GetMyTrade
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: |
+          cp .env.production .env
+          npm install --legacy-peer-deps
+
+      - name: Build Project
+        run: |
+          npm run build
+
+      - name: Deploy Next.js Project
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Adjust paths based on your project setup
+          BUILD_DIR=".next"
+
+          # Deploy application files
+          sshpass -p '5G&ZZoT6B1jH)f?bC&j9' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@156.67.221.244:/var/www/getmytrade-fe/
+
+      - name: Set Permissions
+        run: |
+          sshpass -p '5G&ZZoT6B1jH)f?bC&j9' ssh -o StrictHostKeyChecking=no root@156.67.221.244 '
+            chmod -R 755 /var/www/getmytrade-fe &&
+            chown -R www-data:www-data /var/www/getmytrade-fe
+          '
+
+      - name: Restart Server (optional)
+        run: |
+          sshpass -p '5G&ZZoT6B1jH)f?bC&j9' ssh -o StrictHostKeyChecking=no root@156.67.221.244 '
+            systemctl restart nginx
+            pm2 restart getmytrade-fe
+          '
