@@ -1,4 +1,4 @@
-name: Deployment of shorten platform bitunix
+name: Deploy Shorten Platform (Bitunix & GetMyTrade)
 
 on:
   push:
@@ -12,8 +12,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        target: [bitunix, getmytrade]
+
     steps:
-      - name: 🚚 Get latest code
+      - name: 🚚 Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -21,12 +25,19 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Set NPM mirror temporarily
+      - name: Set NPM mirror
         run: npm config set registry https://registry.npmmirror.com
 
-      - name: Retry Install Dependencies
+      - name: Setup environment file
         run: |
-          cp .env.production .env
+          if [ "${{ matrix.target }}" = "bitunix" ]; then
+            cp .env.production .env.production
+          elif [ "${{ matrix.target }}" = "getmytrade" ]; then
+            cp .env.mytrade .env.production
+          fi
+
+      - name: Install Dependencies
+        run: |
           for i in 1 2 3; do
             npm install --legacy-peer-deps && break
             echo "Retrying npm install ($i)..."
@@ -37,28 +48,40 @@ jobs:
         run: npm config set registry https://registry.npmjs.org
 
       - name: Build Project
-        run: |
-          npm run build
+        run: npm run build
 
-      - name: Deploy Next.js Project
-        if: github.ref == 'refs/heads/main'
+      - name: Deploy via SSH
         run: |
-          # Adjust paths based on your project setup
-          BUILD_DIR=".next"
-
-          # Deploy application files
-          sshpass -p 'c#)rgPMzNC2998@Vb4.M' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@147.93.30.80:/var/www/shrt-bitunix-fe/
+          if [ "${{ matrix.target }}" = "bitunix" ]; then
+            sshpass -p 'c#)rgPMzNC2998@Vb4.M' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@147.93.30.80:/var/www/shrt-bitunix-fe/
+          elif [ "${{ matrix.target }}" = "getmytrade" ]; then
+            sshpass -p '5G&ZZoT6B1jH)f?bC&j9' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@156.67.221.244:/var/www/getmytrade-fe/
+          fi
 
       - name: Set Permissions
         run: |
-          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 '
-            chmod -R 755 /var/www/shrt-bitunix-fe &&
-            chown -R www-data:www-data /var/www/shrt-bitunix-fe
-          '
+          if [ "${{ matrix.target }}" = "bitunix" ]; then
+            sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 '
+              chmod -R 755 /var/www/shrt-bitunix-fe &&
+              chown -R www-data:www-data /var/www/shrt-bitunix-fe
+            '
+          elif [ "${{ matrix.target }}" = "getmytrade" ]; then
+            sshpass -p '5G&ZZoT6B1jH)f?bC&j9' ssh -o StrictHostKeyChecking=no root@156.67.221.244 '
+              chmod -R 755 /var/www/getmytrade-fe &&
+              chown -R www-data:www-data /var/www/getmytrade-fe
+            '
+          fi
 
-      - name: Restart Server (optional)
+      - name: Restart Services
         run: |
-          sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 '
-            systemctl restart nginx
-            pm2 restart bitunix
-          '
+          if [ "${{ matrix.target }}" = "bitunix" ]; then
+            sshpass -p 'c#)rgPMzNC2998@Vb4.M' ssh -o StrictHostKeyChecking=no root@147.93.30.80 '
+              systemctl restart nginx
+              pm2 restart bitunix
+            '
+          elif [ "${{ matrix.target }}" = "getmytrade" ]; then
+            sshpass -p '5G&ZZoT6B1jH)f?bC&j9' ssh -o StrictHostKeyChecking=no root@156.67.221.244 '
+              systemctl restart nginx
+              pm2 restart getmytrade-fe
+            '
+          fi
