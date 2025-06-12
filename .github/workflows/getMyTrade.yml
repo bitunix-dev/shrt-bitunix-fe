@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cp .env.production .env
+          cp .env.mytrade .env
           npm install --legacy-peer-deps
 
       - name: Build Project
