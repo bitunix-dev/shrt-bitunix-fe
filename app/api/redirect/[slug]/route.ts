@@ -8,8 +8,11 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Slug is missing" }, { status: 400 });
     }
 
+    // ✅ Ambil base URL dari environment variable
+    const baseUrl = process.env.NEXT_PUBLIC_REDIRECT_URL || "https://api.bitunixads.com";
+    
     // ✅ Buat URL tujuan untuk redirect
-    const targetUrl = `https://api.bitunixads.com/${slug}`;
+    const targetUrl = `${baseUrl}/${slug}`;
 
     return NextResponse.redirect(targetUrl, 301); // 301 = Permanent Redirect
 }
