@@ -46,6 +46,10 @@ export function ComboboxForLink() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
+  // Ambil URL dari environment variable
+  const defaultUrl =
+    process.env.NEXT_PUBLIC_API_URL_INTERNAL || "short.bitunixads.com";
+
   return (
     <Popover open={false} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -57,7 +61,7 @@ export function ComboboxForLink() {
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            : "short.bitunixads.com"}
+            : defaultUrl}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

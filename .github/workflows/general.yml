@@ -21,10 +21,20 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install Dependencies
+      - name: Set NPM mirror temporarily
+        run: npm config set registry https://registry.npmmirror.com
+
+      - name: Retry Install Dependencies
         run: |
           cp .env.production .env
-          npm install --legacy-peer-deps
+          for i in 1 2 3; do
+            npm install --legacy-peer-deps && break
+            echo "Retrying npm install ($i)..."
+            sleep 5
+          done
+
+      - name: Reset NPM registry
+        run: npm config set registry https://registry.npmjs.org
 
       - name: Build Project
         run: |
