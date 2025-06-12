@@ -31,7 +31,7 @@ jobs:
       - name: Setup environment file
         run: |
           if [ "${{ matrix.target }}" = "bitunix" ]; then
-            cp .env.production .env.production
+            echo "Using .env.production as-is"
           elif [ "${{ matrix.target }}" = "getmytrade" ]; then
             cp .env.mytrade .env.production
           fi
