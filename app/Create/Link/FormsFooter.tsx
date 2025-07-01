@@ -82,22 +82,39 @@ export const FormFooter: React.FC<FormFooterProps> = ({
       if (apiError?.response?.status === 422) {
         const errorData = apiError.response.data;
 
-        // Check if error is related to short_link
+        // ✅ Simple user-friendly messages
         if (errorData?.errors?.short_link) {
-          setShortLinkError(errorData.errors.short_link[0]);
-          showNotification("Short link already in use!", "error");
-        } else if (errorData?.message) {
-          setShortLinkError(errorData.message);
-          showNotification(errorData.message, "error");
+          setShortLinkError(
+            "This short link is already taken. Please choose a different one."
+          );
+          showNotification("Short link already taken!", "error");
+        } else if (
+          errorData?.message?.includes("short link") ||
+          errorData?.message?.includes("duplicate")
+        ) {
+          setShortLinkError(
+            "This short link is already taken. Please choose a different one."
+          );
+          showNotification("Short link already taken!", "error");
+        } else if (errorData?.message?.includes("validation")) {
+          setShortLinkError("Please check your input and try again.");
+          showNotification("Please check your input!", "error");
         } else {
+          setShortLinkError("Unable to create short link. Please try again.");
           showNotification("Error creating short link!", "error");
         }
+      } else if (apiError?.response?.status === 400) {
+        setShortLinkError(
+          "Invalid input. Please check your URL and try again."
+        );
+        showNotification("Invalid input!", "error");
+      } else if (apiError?.response?.status === 500) {
+        setShortLinkError("Server error. Please try again later.");
+        showNotification("Server error!", "error");
       } else {
-        // Handle other errors
-        const errorMessage =
-          apiError?.message || "An unexpected error occurred";
-        setShortLinkError(errorMessage);
-        showNotification("Server error occurred!", "error");
+        // Generic error
+        setShortLinkError("Something went wrong. Please try again.");
+        showNotification("Something went wrong!", "error");
       }
     } finally {
       setIsLoading(false);
