@@ -2,16 +2,32 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
-// ✅ Helper function to set cookie
-const setCookie = (name: string, value: string, days: number = 7) => {
+// ✅ Helper function to set HTTP-only style cookie (as much as possible from client-side)
+const setSecureCookie = (name: string, value: string, days: number = 7) => {
   const expires = new Date();
   expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Strict`;
+  
+  // Set cookie with secure options
+  const cookieOptions = [
+    `${name}=${value}`,
+    `expires=${expires.toUTCString()}`,
+    `path=/`,
+    `SameSite=Strict`,
+    // Note: Can't set HttpOnly from client-side, but we'll handle this in API route
+  ];
+  
+  document.cookie = cookieOptions.join(';');
 };
 
 // ✅ Helper function to remove cookie
 const removeCookie = (name: string) => {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Strict`;
+  const cookieOptions = [
+    `${name}=`,
+    `expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+    `path=/`,
+    `SameSite=Strict`
+  ];
+  document.cookie = cookieOptions.join(';');
 };
 
 // ✅ Register function
@@ -42,7 +58,7 @@ export const register = async (email: string, password: string, password_confirm
   }
 };
 
-// ✅ Login function with cookie storage and email verification check
+// ✅ Login function - Store token via API route for proper HttpOnly cookie
 export const login = async (email: string, password: string) => {
   try {
     const response = await fetch(`${API_BASE_URL}/login`, {
@@ -70,13 +86,36 @@ export const login = async (email: string, password: string) => {
       throw new Error(data.message || "Login failed");
     }
 
-    // ✅ Store token and user data in cookies (not localStorage)
+    // ✅ Store token via API route to set proper HttpOnly cookie
     if (data.data?.token) {
-      setCookie("token", data.data.token, 7); // 7 days expiry
-      setCookie("userName", data.data.user.name, 7);
-      setCookie("avatar", data.data.user.avatar || "", 7);
+      try {
+        const cookieResponse = await fetch('/api/auth/set-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: data.data.token,
+            user: data.data.user,
+          }),
+        });
+
+        if (!cookieResponse.ok) {
+          console.error('Failed to set auth cookie');
+          // Fallback to client-side storage
+          setSecureCookie("token", data.data.token, 7);
+          setSecureCookie("userName", data.data.user.name, 7);
+          setSecureCookie("avatar", data.data.user.avatar || "", 7);
+        }
+      } catch (error) {
+        console.error('Error setting auth cookie:', error);
+        // Fallback to client-side storage
+        setSecureCookie("token", data.data.token, 7);
+        setSecureCookie("userName", data.data.user.name, 7);
+        setSecureCookie("avatar", data.data.user.avatar || "", 7);
+      }
       
-      // Also store in localStorage for backward compatibility
+      // Also store in localStorage for backward compatibility and client-side access
       localStorage.setItem("auth_token", data.data.token);
       localStorage.setItem("user_data", JSON.stringify(data.data.user));
     }
@@ -141,27 +180,21 @@ export const resendVerificationCode = async (email: string) => {
   }
 };
 
-// ✅ Logout function - clear both cookies and localStorage
+// ✅ Logout function
 export const logout = async () => {
   try {
-    const token = getCookie("token") || localStorage.getItem("auth_token");
-    
-    if (token) {
-      await fetch(`${API_BASE_URL}/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-    }
+    // Call logout API route to clear HttpOnly cookie
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    // ✅ Clear cookies
+    // Also clear client-side storage
     removeCookie("token");
     removeCookie("userName");
     removeCookie("avatar");
-    
-    // ✅ Clear localStorage
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
     
