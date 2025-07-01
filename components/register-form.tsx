@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { register } from "@/services/authServices";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { EmailVerification } from "@/components/EmailVerification";
 
 export function RegisterForm({
   className,
@@ -14,24 +15,42 @@ export function RegisterForm({
 }: React.ComponentProps<"form">) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [password_confirmation, setPassword_confirmation] = useState<string>("");
+  const [password_confirmation, setPassword_confirmation] =
+    useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  
+  const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string>("");
+
   const router = useRouter();
+
+  // ✅ Custom notification function
+  const showNotification = (
+    message: string,
+    type: "success" | "error" = "success"
+  ) => {
+    if (type === "success") {
+      alert(`✅ ${message}`);
+    } else {
+      alert(`❌ ${message}`);
+    }
+  };
 
   // Validate email function
   const validateEmail = (email: string): boolean => {
     if (!email) return false;
-    
+
     const emailDomain = email.split("@")[1];
     return emailDomain === "bitunix.io" || emailDomain === "bitunix.com";
   };
 
   // Validate password match
-  const validatePasswordMatch = (password: string, confirmation: string): boolean => {
+  const validatePasswordMatch = (
+    password: string,
+    confirmation: string
+  ): boolean => {
     if (!password || !confirmation) return false;
     return password === confirmation;
   };
@@ -40,37 +59,43 @@ export function RegisterForm({
   useEffect(() => {
     // Check email validity
     const isEmailValid = validateEmail(email);
-    
+
     // Update email error message
     if (email && !isEmailValid) {
-      setEmailError("Please enter an email with @bitunix.io or @bitunix.com domain.");
+      setEmailError(
+        "Please enter an email with @bitunix.io or @bitunix.com domain."
+      );
     } else {
       setEmailError("");
     }
-    
+
     // Check password match
-    const doPasswordsMatch = validatePasswordMatch(password, password_confirmation);
-    
+    const doPasswordsMatch = validatePasswordMatch(
+      password,
+      password_confirmation
+    );
+
     // Update password error message
     if (password && password_confirmation && !doPasswordsMatch) {
       setPasswordError("Passwords do not match.");
     } else {
       setPasswordError("");
     }
-    
+
     // Check if all fields are filled and valid
     const isPasswordValid = password.length >= 6; // Minimum 6 characters
-    
+
     setIsFormValid(
-      isEmailValid && 
-      isPasswordValid && 
-      doPasswordsMatch && 
-      !!email && 
-      !!password && 
-      !!password_confirmation
+      isEmailValid &&
+        isPasswordValid &&
+        doPasswordsMatch &&
+        !!email &&
+        !!password &&
+        !!password_confirmation
     );
   }, [email, password, password_confirmation]);
 
+  // ✅ Handle registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,15 +105,48 @@ export function RegisterForm({
     try {
       const response = await register(email, password, password_confirmation);
       console.log(response);
+
       if (response.status === 201) {
-        router.push("/login");
+        showNotification(
+          "Registration successful! Please check your email for verification code.",
+          "success"
+        );
+        setRegisteredEmail(email);
+        setShowVerification(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
+
+      // Handle different types of errors
+      if (error?.response?.status === 422) {
+        const errorData = error.response.data;
+        if (errorData?.errors?.email) {
+          setEmailError(errorData.errors.email[0]);
+        }
+        showNotification("Email already registered!", "error");
+      } else {
+        showNotification("Registration failed!", "error");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // ✅ Handle successful verification
+  const handleVerificationSuccess = () => {
+    showNotification("Email verified successfully! Please login.", "success");
+    router.push("/login");
+  };
+
+  // ✅ If verification needs to be shown
+  if (showVerification) {
+    return (
+      <EmailVerification
+        email={registeredEmail}
+        onVerificationSuccess={handleVerificationSuccess}
+      />
+    );
+  }
 
   return (
     <form
@@ -133,7 +191,9 @@ export function RegisterForm({
             className="text-md p-5"
             required
           />
-          {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
+          {passwordError && (
+            <p className="text-red-500 text-sm">{passwordError}</p>
+          )}
         </div>
         <Button
           type="submit"
@@ -145,8 +205,11 @@ export function RegisterForm({
       </div>
       <div className="text-left text-sm">
         Already have an account?{" "}
-        <Link href="/login" className="underline underline-offset-4">
-          Login
+        <Link
+          href="/login"
+          className="underline underline-offset-4 hover:text-primary"
+        >
+          Sign in
         </Link>
       </div>
     </form>

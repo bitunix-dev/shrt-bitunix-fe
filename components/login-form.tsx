@@ -4,9 +4,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 import { login } from "@/services/authServices";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { EmailVerification } from "@/components/EmailVerification";
 
 export function LoginForm({
   className,
@@ -15,14 +17,30 @@ export function LoginForm({
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
 
   const router = useRouter();
+
+  // ✅ Custom notification function
+  const showNotification = (
+    message: string,
+    type: "success" | "error" = "success"
+  ) => {
+    if (type === "success") {
+      alert(`✅ ${message}`);
+    } else {
+      alert(`❌ ${message}`);
+    }
+  };
 
   // Validate email function
   const validateEmail = (email: string): boolean => {
     if (!email) return false;
-    
+
     const emailDomain = email.split("@")[1];
     return emailDomain === "bitunix.io" || emailDomain === "bitunix.com";
   };
@@ -31,33 +49,83 @@ export function LoginForm({
   useEffect(() => {
     const isEmailValid = validateEmail(email);
     const isPasswordValid = password.length > 0;
-    
+
     setIsFormValid(isEmailValid && isPasswordValid);
-    
+
     // Update email error message
     if (email && !isEmailValid) {
-      setEmailError("Please enter an email with @bitunix.io or @bitunix.com domain.");
+      setEmailError(
+        "Please enter an email with @bitunix.io or @bitunix.com domain."
+      );
     } else {
       setEmailError("");
     }
   }, [email, password]);
 
-  const handleClick = async () => {
-    if (!isFormValid) return;
-    
+  // ✅ Handle login submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isFormValid || isLoading) return;
+
+    setIsLoading(true);
+    setLoginError("");
+
     try {
       const response = await login(email, password);
 
       if (response.status === 200) {
+        showNotification("Login successful!", "success");
         router.push("/");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      // ✅ Handle email verification required
+      if (error.needs_verification) {
+        showNotification("Email not verified!", "error");
+        setUnverifiedEmail(error.email || email);
+        setShowVerification(true);
+      } else {
+        // Handle other login errors
+        setLoginError(
+          error.message || "Login failed. Please check your email and password."
+        );
+        showNotification("Login failed!", "error");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // ✅ Handle successful verification
+  const handleVerificationSuccess = () => {
+    setShowVerification(false);
+    showNotification(
+      "Email verified successfully! Please login again.",
+      "success"
+    );
+    // Reset form
+    setPassword("");
+    setLoginError("");
+  };
+
+  // ✅ If verification needs to be shown
+  if (showVerification) {
+    return (
+      <EmailVerification
+        email={unverifiedEmail}
+        onVerificationSuccess={handleVerificationSuccess}
+      />
+    );
+  }
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-col items-start gap-2 text-left">
         <h1 className="text-3xl font-bold">Log in</h1>
       </div>
@@ -71,6 +139,7 @@ export function LoginForm({
             placeholder="Enter your email address"
             className="text-md p-5"
             required
+            value={email}
           />
           {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
         </div>
@@ -91,22 +160,33 @@ export function LoginForm({
             placeholder="Enter your password"
             className="text-md p-5"
             required
+            value={password}
           />
         </div>
+
+        {/* ✅ Login Error Message */}
+        {loginError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm font-medium">⚠️ {loginError}</p>
+          </div>
+        )}
+
         <Button
-          type="button"
-          onClick={() => void handleClick()}
-          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] mt-3 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!isFormValid}
+          type="submit"
+          className="w-full p-5 text-black bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!isFormValid || isLoading}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
       </div>
       <div className="text-left text-sm">
-        No account yet?{" "}
-        <a href="/register" className="underline underline-offset-4">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          className="underline underline-offset-4 hover:text-primary"
+        >
           Sign up
-        </a>
+        </Link>
       </div>
     </form>
   );
