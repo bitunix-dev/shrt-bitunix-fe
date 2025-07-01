@@ -25,18 +25,6 @@ export function LoginForm({
 
   const router = useRouter();
 
-  // ✅ Custom notification function
-  const showNotification = (
-    message: string,
-    type: "success" | "error" = "success"
-  ) => {
-    if (type === "success") {
-      alert(`✅ ${message}`);
-    } else {
-      alert(`❌ ${message}`);
-    }
-  };
-
   // Validate email function
   const validateEmail = (email: string): boolean => {
     if (!email) return false;
@@ -75,15 +63,17 @@ export function LoginForm({
       const response = await login(email, password);
 
       if (response.status === 200) {
-        showNotification("Login successful!", "success");
-        router.push("/");
+        // ✅ Don't show alert, just redirect quietly
+        console.log("Login successful, redirecting to dashboard...");
+
+        // ✅ Force page reload after redirect to ensure middleware picks up the cookie
+        window.location.href = "/";
       }
     } catch (error: any) {
       console.error("Login error:", error);
 
       // ✅ Handle email verification required
       if (error.needs_verification) {
-        showNotification("Email not verified!", "error");
         setUnverifiedEmail(error.email || email);
         setShowVerification(true);
       } else {
@@ -91,7 +81,6 @@ export function LoginForm({
         setLoginError(
           error.message || "Login failed. Please check your email and password."
         );
-        showNotification("Login failed!", "error");
       }
     } finally {
       setIsLoading(false);
@@ -101,13 +90,11 @@ export function LoginForm({
   // ✅ Handle successful verification
   const handleVerificationSuccess = () => {
     setShowVerification(false);
-    showNotification(
-      "Email verified successfully! Please login again.",
-      "success"
-    );
     // Reset form
     setPassword("");
     setLoginError("");
+    // Just show a simple message that verification was successful
+    alert("✅ Email verified successfully! Please login again.");
   };
 
   // ✅ If verification needs to be shown

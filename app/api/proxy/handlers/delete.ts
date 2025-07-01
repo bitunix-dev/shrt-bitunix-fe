@@ -16,7 +16,7 @@ export async function handleDelete(req: NextRequest) {
     const endpoint = searchParams.get("endpoint");
 
     if (!endpoint) {
-      return NextResponse.json({ error: "Endpoint diperlukan" }, { status: 400 });
+      return NextResponse.json({ error: "Endpoint needed" }, { status: 400 });
     }
 
     // Buat URL API eksternal
