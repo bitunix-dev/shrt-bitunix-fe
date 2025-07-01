@@ -93,7 +93,7 @@ export function LoginForm({
     // Reset form
     setPassword("");
     setLoginError("");
-    // Just show a simple message that verification was successful
+    // Show message for manual login (when auto-login is not enabled)
     alert("✅ Email verified successfully! Please login again.");
   };
 
