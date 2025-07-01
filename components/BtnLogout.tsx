@@ -20,11 +20,20 @@ export function BtnLogout() {
 
   const handleLogout = async () => {
     try {
+      console.log("Starting logout process...");
+      
+      // Execute logout mutation
       await mutation.mutateAsync();
+      console.log("Logout API call completed");
+      
+      // Redirect to login
+      console.log("Redirecting to login...");
       router.push("/login");
+      
     } catch (error) {
-      console.log(error);
+      console.error("Logout error:", error);
       // Even if logout fails, redirect to login
+      console.log("Redirecting to login despite error...");
       router.push("/login");
     }
   };
