@@ -21,14 +21,11 @@ export function BtnLogout() {
   const handleLogout = async () => {
     try {
       await mutation.mutateAsync();
-
-      // cookies sudah dihapus di hook atau di sini
-      document.cookie = "userName=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      document.cookie = "avatar=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
       router.push("/login");
     } catch (error) {
       console.log(error);
+      // Even if logout fails, redirect to login
+      router.push("/login");
     }
   };
 

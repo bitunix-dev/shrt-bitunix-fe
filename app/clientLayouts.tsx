@@ -9,7 +9,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Footer } from "@/components/Footer/Footer";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useActivityTimeout } from "@/hooks/useActivityTimeout";
 import { logout } from "@/services/authServices";
@@ -18,19 +18,15 @@ interface ClientLayoutsProps {
   children: React.ReactNode;
 }
 
-const queryClient = new QueryClient();
-
-export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
-  const pathname = usePathname();
+// Component that uses hooks requiring QueryClient
+const AuthenticatedContent: React.FC<{
+  showSidebar: boolean;
+  children: React.ReactNode;
+  userName: string;
+  avatar: string;
+  isLoading: boolean;
+}> = ({ showSidebar, children, userName, avatar, isLoading }) => {
   const router = useRouter();
-  const showSidebar = pathname
-    ? !["/login", "/register"].some((path) => pathname.startsWith(path))
-    : false;
-
-  // Initialize state variables
-  const [userName, setUserName] = useState<string>("");
-  const [avatar, setAvatar] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ✅ Aktivasi activity timeout hanya untuk halaman yang memerlukan auth
   useActivityTimeout(15); // 15 menit timeout
@@ -68,64 +64,102 @@ export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
     };
   }, [showSidebar, router]);
 
-  // Fetch user data from API only
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Get user data from API
-        const response = await fetch("/api/auth/user");
-        const data = await response.json();
+  return (
+    <>
+      {showSidebar && (
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset className="bg-neutral-950">
+            <header className="flex h-16 shrink-0 bg-neutral-950 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+              <div className="flex items-center justify-between w-full gap-2 px-4">
+                <SidebarTrigger className="text-white" />
+                <div className="flex items-center gap-3">
+                  {isLoading ? (
+                    <p className="text-white">Loading...</p>
+                  ) : (
+                    <>
+                      <p className="text-white">Hi {userName || "Guest"}</p>
+                      <Avatar>
+                        <AvatarImage src={avatar} alt="avatar" />
+                        <AvatarFallback>
+                          {userName ? userName.charAt(0).toUpperCase() : "G"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </>
+                  )}
+                </div>
+              </div>
+            </header>
+            <main className="w-full">
+              <div className="p-5 w-8xl mx-auto">{children}</div>
+              <Footer />
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
+      )}
+      {!showSidebar && <div>{children}</div>}
+    </>
+  );
+};
 
-        // Set user data from API
-        setUserName(data.userName || "");
-        setAvatar(data.avatar || "");
+export const ClientLayouts: React.FC<ClientLayoutsProps> = ({ children }) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const showSidebar = pathname
+    ? !["/login", "/register"].some((path) => pathname.startsWith(path))
+    : false;
+
+  // Create a stable QueryClient instance
+  const queryClient = useMemo(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes
+      },
+    },
+  }), []);
+
+  // Initialize state variables
+  const [userName, setUserName] = useState<string>("");
+  const [avatar, setAvatar] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Get user data from localStorage
+  useEffect(() => {
+    const getUserData = () => {
+      try {
+        // Get user data from localStorage
+        const userData = localStorage.getItem("user_data");
+        if (userData) {
+          const user = JSON.parse(userData);
+          setUserName(user.name || "");
+          setAvatar(user.avatar || "");
+        }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error parsing user data from localStorage:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (showSidebar) {
-      fetchUserData();
+      getUserData();
+    } else {
+      setIsLoading(false);
     }
   }, [showSidebar]);
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        {showSidebar && (
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className="bg-neutral-950">
-              <header className="flex h-16 shrink-0 bg-neutral-950 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                <div className="flex items-center justify-between w-full gap-2 px-4">
-                  <SidebarTrigger className="text-white" />
-                  <div className="flex items-center gap-3">
-                    {isLoading ? (
-                      <p className="text-white">Loading...</p>
-                    ) : (
-                      <>
-                        <p className="text-white">Hi {userName || "Guest"}</p>
-                        <Avatar>
-                          <AvatarImage src={avatar} alt="avatar" />
-                          <AvatarFallback>
-                            {userName ? userName.charAt(0).toUpperCase() : "G"}
-                          </AvatarFallback>
-                        </Avatar>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </header>
-              <main className="w-full">
-                <div className="p-5 w-8xl mx-auto">{children}</div>
-                <Footer />
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
-        )}
-        {!showSidebar && <div>{children}</div>}
+        <AuthenticatedContent
+          showSidebar={showSidebar}
+          userName={userName}
+          avatar={avatar}
+          isLoading={isLoading}
+        >
+          {children}
+        </AuthenticatedContent>
       </QueryClientProvider>
     </>
   );
