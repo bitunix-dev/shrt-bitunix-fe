@@ -113,7 +113,9 @@ export const FormFooter: React.FC<FormFooterProps> = ({
         showNotification("Server error!", "error");
       } else {
         // Generic error
-        setShortLinkError("Something went wrong. Please try again.");
+        setShortLinkError(
+          "This short link is already taken. Please choose a different one."
+        );
         showNotification("Something went wrong!", "error");
       }
     } finally {
