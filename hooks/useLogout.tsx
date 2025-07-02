@@ -21,27 +21,49 @@ export function useLogout() {
 
   return useMutation<void, Error, void>({
     mutationFn: async () => {
-      // Clear local storage and cookies first
+      // Get token before clearing storage
+      const token = localStorage.getItem("auth_token");
+
+      // Call external logout API with Bearer token first
+      if (token) {
+        try {
+          const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.bitunixads.com/api";
+          const response = await fetch(`${API_BASE_URL}/logout`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            console.log("External logout API succeeded");
+          } else {
+            console.error("External logout API failed:", response.status);
+          }
+        } catch (error) {
+          console.error("External logout API call failed:", error);
+        }
+      }
+
+      // Clear local storage and cookies after API call
       clearLocalStorage();
 
-      // Reset query cache
-      queryClient.resetQueries();
-
-      // Call internal logout API to clear HttpOnly cookies first
+      // Also call internal API to clear HttpOnly cookies
       try {
-        const response = await fetch("/api/auth/logout", {
+        await fetch("/api/auth/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
         });
-
-        if (!response.ok) {
-          console.error("Logout API failed:", response.status);
-        }
       } catch (error) {
-        console.error("Logout API call failed:", error);
+        console.error("Internal logout API call failed:", error);
       }
+
+      // Reset query cache
+      queryClient.resetQueries();
 
       // Then redirect to login with force reload
       window.location.replace("/login");
