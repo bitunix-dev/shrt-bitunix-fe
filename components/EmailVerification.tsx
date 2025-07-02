@@ -42,6 +42,14 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     console.log(`${type.toUpperCase()}: ${message}`);
   };
 
+  // ✅ Auto focus to first input when component mounts
+  useEffect(() => {
+    // Focus first input when component loads
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
+  }, []);
+
   // ✅ Countdown timer for resend button
   useEffect(() => {
     if (timeLeft > 0) {
