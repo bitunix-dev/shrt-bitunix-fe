@@ -11,8 +11,6 @@ import { Footer } from "@/components/Footer/Footer";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useActivityTimeout } from "@/hooks/useActivityTimeout";
-import { logout } from "@/services/authServices";
 
 interface ClientLayoutsProps {
   children: React.ReactNode;
@@ -28,41 +26,6 @@ const AuthenticatedContent: React.FC<{
 }> = ({ showSidebar, children, userName, avatar, isLoading }) => {
   const router = useRouter();
 
-  // ✅ Aktivasi activity timeout hanya untuk halaman yang memerlukan auth
-  useActivityTimeout(15); // 15 menit timeout
-
-  // ✅ Auto logout saat menutup browser/tab
-  useEffect(() => {
-    if (!showSidebar) return; // Hanya aktif di halaman yang memerlukan auth
-
-    const handleBeforeUnload = async () => {
-      try {
-        await logout();
-      } catch (error) {
-        console.error("Error during auto logout:", error);
-      }
-    };
-
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === "hidden") {
-        try {
-          await logout();
-          router.push("/login");
-        } catch (error) {
-          console.error("Error during visibility change logout:", error);
-        }
-      }
-    };
-
-    // ✅ Event listeners untuk auto logout
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [showSidebar, router]);
 
   return (
     <>
