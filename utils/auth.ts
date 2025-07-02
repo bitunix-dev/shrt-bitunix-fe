@@ -4,8 +4,8 @@ import { NextRequest } from "next/server";
 // Get the base URL for internal API calls
 function getBaseUrl(): string {
   // If environment variable is set, use it
-  if (process.env.NEXT_PUBLIC_API_URL_INTERNAL) {
-    return process.env.NEXT_PUBLIC_API_URL_INTERNAL;
+  if (process.env.NEXT_PUBLIC_REDIRECT_URL) {
+    return process.env.NEXT_PUBLIC_REDIRECT_URL;
   }
   
   // In production (Vercel), use the deployment URL
