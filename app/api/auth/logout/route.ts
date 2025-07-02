@@ -13,13 +13,34 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
     
-    // Hapus cookie token
+    // Hapus cookie token dengan semua kemungkinan atribut
     response.cookies.set({
       name: "token",
       value: "",
       expires: new Date(0),
       path: "/",
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    // Try multiple deletion methods
+    response.cookies.delete("token");
+    response.cookies.delete({
+      name: "token",
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    
+    // Also try without httpOnly in case it was set differently
+    response.cookies.set({
+      name: "token",
+      value: "",
+      expires: new Date(0),
+      path: "/",
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
@@ -34,6 +55,11 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
+    response.cookies.delete("userName");
+    response.cookies.delete({
+      name: "userName",
+      path: "/",
+    });
 
     // Hapus cookie avatar
     response.cookies.set({
@@ -44,6 +70,11 @@ export async function POST(request: NextRequest) {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
+    });
+    response.cookies.delete("avatar");
+    response.cookies.delete({
+      name: "avatar",
+      path: "/",
     });
 
     

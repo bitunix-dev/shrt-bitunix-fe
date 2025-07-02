@@ -21,31 +21,37 @@ export function useLogout() {
 
   return useMutation<void, Error, void>({
     mutationFn: async () => {
-      const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const token = localStorage.getItem("auth_token");
+      // Clear local storage and cookies first
+      clearLocalStorage();
 
-      await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
+      // Reset query cache
+      queryClient.resetQueries();
+
+      // Call internal logout API to clear HttpOnly cookies first
+      try {
+        const response = await fetch("/api/auth/logout", {
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+        });
+
+        if (!response.ok) {
+          console.error("Logout API failed:", response.status);
         }
-      );
+      } catch (error) {
+        console.error("Logout API call failed:", error);
+      }
+
+      // Then redirect to login with force reload
+      window.location.replace("/login");
     },
     onSuccess: () => {
-      // Clear local storage and cookies
-      clearLocalStorage();
-
-      // Invalidate / reset all cache
-      queryClient.resetQueries();
+      // Already redirected in mutationFn
     },
     onError: () => {
-      // Even if API call fails, clear local storage
-      clearLocalStorage();
+      // Even if anything fails, ensure redirect to login
+      window.location.replace("/login");
     },
   });
 }

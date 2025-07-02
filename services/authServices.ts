@@ -183,31 +183,36 @@ export const resendVerificationCode = async (email: string) => {
 // ✅ Logout function
 export const logout = async () => {
   try {
-    // Call logout API route to clear HttpOnly cookie
-    await fetch('/api/auth/logout', {
+    // Clear client-side storage first
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
+    
+    // Clear non-HttpOnly cookies from client-side
+    removeCookie("userName");
+    removeCookie("avatar");
+    
+    // Call logout API route to clear HttpOnly cookie and external API
+    const response = await fetch('/api/auth/logout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    // Also clear client-side storage
-    removeCookie("token");
-    removeCookie("userName");
-    removeCookie("avatar");
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user_data");
+    if (!response.ok) {
+      console.error('Logout API failed:', response.status);
+    }
     
     return { success: true };
   } catch (error) {
     console.error("Logout error:", error);
     // Even if API call fails, clear storage
-    removeCookie("token");
-    removeCookie("userName");
-    removeCookie("avatar");
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
-    throw error;
+    removeCookie("userName");
+    removeCookie("avatar");
+    
+    return { success: true }; // Don't throw error, just continue
   }
 };
 
