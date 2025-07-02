@@ -249,7 +249,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
 
           {/* ✅ Verify Button */}
           <Button
-            onClick={handleVerify}
+            onClick={() => handleVerify()}
             disabled={!isCodeComplete || isVerifying}
             className="w-full bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-medium"
           >
