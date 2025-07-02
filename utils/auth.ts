@@ -1,7 +1,21 @@
 // utils/auth.ts
 import { NextRequest } from "next/server";
 
-const APP_URL = process.env.NEXT_PUBLIC_API_URL_INTERNAL || 'http://localhost:3000';
+// Get the base URL for internal API calls
+function getBaseUrl(): string {
+  // If environment variable is set, use it
+  if (process.env.NEXT_PUBLIC_API_URL_INTERNAL) {
+    return process.env.NEXT_PUBLIC_API_URL_INTERNAL;
+  }
+  
+  // In production (Vercel), use the deployment URL
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // In development, use localhost
+  return 'http://localhost:3000';
+}
 
 /**
  * Fungsi untuk mendapatkan token otentikasi dari API get-token
@@ -18,7 +32,8 @@ export async function getAuthToken(req: NextRequest) {
     console.log("Cookie preview:", cookieHeader.substring(0, 100) + "...");
     
     // Buat request ke endpoint get-token dengan meneruskan cookie
-    const tokenResponse = await fetch(`${APP_URL}/api/auth/get-token`, {
+    // Use relative URL for internal API calls to avoid cross-origin issues
+    const tokenResponse = await fetch(`/api/auth/get-token`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
