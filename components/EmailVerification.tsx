@@ -70,6 +70,17 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
+
+    // ✅ Auto-trigger verification when all 6 digits are complete
+    const updatedCode = [...newCode];
+    const isComplete = updatedCode.every((digit) => digit !== "");
+    
+    if (isComplete && !isVerifying) {
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        handleVerify(updatedCode);
+      }, 100);
+    }
   };
 
   // ✅ Handle backspace
@@ -89,12 +100,19 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       setCode(newCode);
       setError("");
       inputRefs.current[5]?.focus();
+      
+      // ✅ Auto-trigger verification after paste
+      if (!isVerifying) {
+        setTimeout(() => {
+          handleVerify(newCode);
+        }, 100);
+      }
     }
   };
 
-  // ✅ Submit verification
-  const handleVerify = async () => {
-    const verificationCode = code.join("");
+  // ✅ Submit verification - now accepts optional codeArray parameter
+  const handleVerify = async (codeArray?: string[]) => {
+    const verificationCode = codeArray ? codeArray.join("") : code.join("");
 
     if (verificationCode.length !== 6) {
       setError("Please enter the 6-digit verification code");
@@ -216,13 +234,13 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
             </div>
           )}
 
-          {/* ✅ Verify Button */}
+          {/* ✅ Verify Button - Always disabled during auto-verification */}
           <Button
-            onClick={handleVerify}
-            disabled={!isCodeComplete || isVerifying}
-            className="w-full bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-medium"
+            onClick={() => handleVerify()}
+            disabled={isVerifying}
+            className="w-full bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-medium disabled:opacity-50"
           >
-            {isVerifying ? "Verifying..." : "Verify Email"}
+            {isVerifying ? "Loading..." : "Verify Email"}
           </Button>
 
           {/* ✅ Resend Button */}
