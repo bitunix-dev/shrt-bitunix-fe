@@ -147,6 +147,41 @@ export const verifyEmail = async (email: string, code: string) => {
       throw new Error(data.message || "Email verification failed");
     }
 
+    // ✅ Handle auto-login after email verification
+    if (data.status === 200 && data.data?.token && data.data?.auto_logged_in) {
+      try {
+        // Store token via API route to set proper HttpOnly cookie
+        const cookieResponse = await fetch('/api/auth/set-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: data.data.token,
+            user: data.data.user,
+          }),
+        });
+
+        if (!cookieResponse.ok) {
+          console.error('Failed to set auth cookie');
+          // Fallback to client-side storage
+          setSecureCookie("token", data.data.token, 7);
+          setSecureCookie("userName", data.data.user.name, 7);
+          setSecureCookie("avatar", data.data.user.avatar || "", 7);
+        }
+      } catch (error) {
+        console.error('Error setting auth cookie:', error);
+        // Fallback to client-side storage
+        setSecureCookie("token", data.data.token, 7);
+        setSecureCookie("userName", data.data.user.name, 7);
+        setSecureCookie("avatar", data.data.user.avatar || "", 7);
+      }
+      
+      // Also store in localStorage for backward compatibility and client-side access
+      localStorage.setItem("auth_token", data.data.token);
+      localStorage.setItem("user_data", JSON.stringify(data.data.user));
+    }
+
     return data;
   } catch (error) {
     console.error("Email verification error:", error);

@@ -108,8 +108,17 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       const response = await verifyEmail(email, verificationCode);
 
       if (response.status === 200) {
-        showNotification("Email verified successfully!", "success");
-        onVerificationSuccess();
+        // ✅ Check if auto-login is enabled
+        if (response.data?.auto_logged_in && response.data?.token) {
+          showNotification("Email verified and logged in successfully!", "success");
+          // Redirect to dashboard
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+        } else {
+          showNotification("Email verified successfully!", "success");
+          onVerificationSuccess();
+        }
       }
     } catch (error: any) {
       console.error("Verification error:", error);
