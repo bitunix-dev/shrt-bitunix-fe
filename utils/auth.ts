@@ -1,7 +1,7 @@
 // utils/auth.ts
 import { NextRequest } from "next/server";
 
-const APP_URL = process.env.NEXT_PUBLIC_API_URL_INTERNAL || '';
+const APP_URL = process.env.NEXT_PUBLIC_API_URL_INTERNAL || 'http://localhost:3000';
 
 /**
  * Fungsi untuk mendapatkan token otentikasi dari API get-token
