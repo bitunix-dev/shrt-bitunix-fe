@@ -148,7 +148,7 @@ export const verifyEmail = async (email: string, code: string) => {
     }
 
     // ✅ Handle auto-login after email verification
-    if (data.status === 200 && data.data?.token && data.data?.auto_logged_in) {
+    if (data.status === 200 && data.data?.token && data.data?.auto_logged_in === true) {
       try {
         // Store token via API route to set proper HttpOnly cookie
         const cookieResponse = await fetch('/api/auth/set-token', {

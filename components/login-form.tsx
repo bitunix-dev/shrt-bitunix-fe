@@ -92,9 +92,7 @@ export function LoginForm({
     setShowVerification(false);
     // Reset form
     setPassword("");
-    setLoginError("");
-    // Just show a simple message that verification was successful
-    alert("✅ Email verified successfully! Please login again.");
+    setLoginError("Email verified successfully! Please login again.");
   };
 
   // ✅ If verification needs to be shown
@@ -151,10 +149,20 @@ export function LoginForm({
           />
         </div>
 
-        {/* ✅ Login Error Message */}
+        {/* ✅ Login Message - Success or Error */}
         {loginError && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-600 text-sm font-medium">⚠️ {loginError}</p>
+          <div className={`p-3 border rounded-md ${
+            loginError.includes("verified successfully") 
+              ? "bg-green-50 border-green-200" 
+              : "bg-red-50 border-red-200"
+          }`}>
+            <p className={`text-sm font-medium ${
+              loginError.includes("verified successfully")
+                ? "text-green-600"
+                : "text-red-600"
+            }`}>
+              {loginError}
+            </p>
           </div>
         )}
 
