@@ -32,8 +32,9 @@ export async function getAuthToken(req: NextRequest) {
     console.log("Cookie preview:", cookieHeader.substring(0, 100) + "...");
     
     // Buat request ke endpoint get-token dengan meneruskan cookie
-    // Use relative URL for internal API calls to avoid cross-origin issues
-    const tokenResponse = await fetch(`/api/auth/get-token`, {
+    // Use full URL for server-side fetch calls
+    const baseUrl = getBaseUrl();
+    const tokenResponse = await fetch(`${baseUrl}/api/auth/get-token`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
