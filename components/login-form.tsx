@@ -93,8 +93,9 @@ export function LoginForm({
     // Reset form
     setPassword("");
     setLoginError("");
-    // Just show a simple message that verification was successful
-    alert("✅ Email verified successfully! Please login again.");
+    // Show success message without alert
+    setLoginError("");
+    console.log("Email verified successfully! Please login again.");
   };
 
   // ✅ If verification needs to be shown

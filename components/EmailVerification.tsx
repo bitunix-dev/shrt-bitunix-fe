@@ -33,19 +33,13 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
 
-  // ✅ Custom notification function
+  // ✅ Custom notification function - removed alerts
   const showNotification = (
     message: string,
     type: "success" | "error" | "info" = "info"
   ) => {
-    // You can replace this with your preferred notification system
-    if (type === "success") {
-      alert(`✅ ${message}`);
-    } else if (type === "error") {
-      alert(`❌ ${message}`);
-    } else {
-      alert(`ℹ️ ${message}`);
-    }
+    // Log to console instead of showing alerts
+    console.log(`${type.toUpperCase()}: ${message}`);
   };
 
   // ✅ Countdown timer for resend button
@@ -70,6 +64,15 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
+
+    // Check if code is complete and auto-trigger verification
+    const isComplete = newCode.every(digit => digit !== "");
+    if (isComplete) {
+      // Small delay to ensure UI updates, then trigger verification
+      setTimeout(() => {
+        handleVerify(newCode.join(""));
+      }, 100);
+    }
   };
 
   // ✅ Handle backspace
@@ -89,14 +92,19 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       setCode(newCode);
       setError("");
       inputRefs.current[5]?.focus();
+      
+      // Auto-trigger verification after paste
+      setTimeout(() => {
+        handleVerify(pastedData);
+      }, 100);
     }
   };
 
   // ✅ Submit verification
-  const handleVerify = async () => {
-    const verificationCode = code.join("");
+  const handleVerify = async (verificationCode?: string) => {
+    const codeToVerify = verificationCode || code.join("");
 
-    if (verificationCode.length !== 6) {
+    if (codeToVerify.length !== 6) {
       setError("Please enter the 6-digit verification code");
       return;
     }
@@ -105,11 +113,43 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     setError("");
 
     try {
-      const response = await verifyEmail(email, verificationCode);
+      const response = await verifyEmail(email, codeToVerify);
 
       if (response.status === 200) {
         showNotification("Email verified successfully!", "success");
-        onVerificationSuccess();
+        
+        // Check if auto_logged_in is true
+        if (response.data?.auto_logged_in && response.data?.token) {
+          // Store token and user data
+          try {
+            const cookieResponse = await fetch('/api/auth/set-token', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                token: response.data.token,
+                user: response.data.user,
+              }),
+            });
+
+            if (!cookieResponse.ok) {
+              console.error('Failed to set auth cookie');
+            }
+          } catch (error) {
+            console.error('Error setting auth cookie:', error);
+          }
+          
+          // Store in localStorage for backward compatibility
+          localStorage.setItem("auth_token", response.data.token);
+          localStorage.setItem("user_data", JSON.stringify(response.data.user));
+          
+          // Redirect to dashboard
+          window.location.href = "/";
+        } else {
+          // Normal verification flow - go back to login form
+          onVerificationSuccess();
+        }
       }
     } catch (error: any) {
       console.error("Verification error:", error);
