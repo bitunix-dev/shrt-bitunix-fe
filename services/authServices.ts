@@ -76,13 +76,10 @@ export const login = async (email: string, password: string) => {
 
     if (!response.ok) {
       // ✅ Handle email verification error
-      if (
-        (response.status === 403 && data.needs_verification) ||
-        (response.status === 401 && data.data?.email_verification_required)
-      ) {
+      if (response.status === 401 && data.data?.email_verification_required) {
         const error = new Error(data.message);
         (error as any).needs_verification = true;
-        (error as any).email = data.data?.email || email;
+        (error as any).email = data.data.email || email;
         throw error;
       }
       
@@ -150,8 +147,8 @@ export const verifyEmail = async (email: string, code: string) => {
       throw new Error(data.message || "Email verification failed");
     }
 
-    // ✅ Handle auto-login after successful verification
-    if (data.status === 200 && data.data?.auto_logged_in && data.data?.token) {
+    // ✅ Handle auto-login after email verification
+    if (data.status === 200 && data.data?.token && data.data?.auto_logged_in === true) {
       try {
         // Store token via API route to set proper HttpOnly cookie
         const cookieResponse = await fetch('/api/auth/set-token', {
@@ -166,21 +163,21 @@ export const verifyEmail = async (email: string, code: string) => {
         });
 
         if (!cookieResponse.ok) {
-          console.error('Failed to set auth cookie after verification');
+          console.error('Failed to set auth cookie');
           // Fallback to client-side storage
           setSecureCookie("token", data.data.token, 7);
           setSecureCookie("userName", data.data.user.name, 7);
           setSecureCookie("avatar", data.data.user.avatar || "", 7);
         }
       } catch (error) {
-        console.error('Error setting auth cookie after verification:', error);
+        console.error('Error setting auth cookie:', error);
         // Fallback to client-side storage
         setSecureCookie("token", data.data.token, 7);
         setSecureCookie("userName", data.data.user.name, 7);
         setSecureCookie("avatar", data.data.user.avatar || "", 7);
       }
       
-      // Store in localStorage for backward compatibility and client-side access
+      // Also store in localStorage for backward compatibility and client-side access
       localStorage.setItem("auth_token", data.data.token);
       localStorage.setItem("user_data", JSON.stringify(data.data.user));
     }

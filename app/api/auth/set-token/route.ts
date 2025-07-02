@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 // Encryption settings - create exact 32-byte key
-const rawKey = process.env.TOKEN_ENCRYPTION_KEY  || '' 
+const rawKey = process.env.TOKEN_ENCRYPTION_KEY || '3qF#8jK!p2L@7zX$5vC*9bN^6mT&1dR%0sY4wE-8gH+3aP';
 // Ensure key is exactly 32 bytes using SHA-256 hash
 const ENCRYPTION_KEY = crypto.createHash('sha256').update(rawKey).digest();
 const ALGORITHM = 'aes-256-gcm';
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 30 * 60, // 1 week
+      maxAge: 7 * 24 * 60 * 60, // 1 week
       path: '/',
     });
     

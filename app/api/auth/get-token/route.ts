@@ -37,7 +37,12 @@ function decryptToken(encryptedData: string): string {
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('=== GET TOKEN DEBUG START ===');
     console.log('Received request to get token');
+    
+    // Debug: Log all cookies
+    const allCookies = request.cookies.getAll();
+    console.log('All cookies received:', allCookies.map(c => ({ name: c.name, value: c.value.substring(0, 50) + '...' })));
     
     // Mengakses token dari cookies
     const encryptedToken = request.cookies.get('token')?.value;
@@ -49,13 +54,20 @@ export async function GET(request: NextRequest) {
       }, { status: 401 });
     }
     
+    console.log('Encrypted token found, length:', encryptedToken.length);
+    console.log('Encrypted token format check:', encryptedToken.includes(':') ? 'Valid format (contains :)' : 'Invalid format (no :)');
+    
     try {
       // Mendekripsi token
+      console.log('Attempting to decrypt token...');
       const decryptedToken = decryptToken(encryptedToken);
-      console.log('Token decrypted successfully');
+      console.log('Token decrypted successfully, length:', decryptedToken.length);
+      console.log('Decrypted token preview:', decryptedToken.substring(0, 10) + '...');
       
       // Anda bisa memverifikasi token JWT di sini jika perlu
       // const verifiedToken = verifyJWT(decryptedToken);
+      
+      console.log('=== GET TOKEN DEBUG END (SUCCESS) ===');
       
       // Mengembalikan informasi yang aman (sebaiknya jangan mengembalikan token asli)
       return NextResponse.json({ 
@@ -67,6 +79,7 @@ export async function GET(request: NextRequest) {
       }, { status: 200 });
     } catch (decryptError) {
       console.error('Failed to decrypt token:', decryptError);
+      console.log('=== GET TOKEN DEBUG END (FAILED) ===');
       return NextResponse.json({ 
         error: 'Token tidak valid' 
       }, { status: 401 });

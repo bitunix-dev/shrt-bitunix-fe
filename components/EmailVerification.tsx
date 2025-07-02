@@ -33,19 +33,13 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
 
-  // ✅ Custom notification function
+  // ✅ Custom notification function - removed alerts
   const showNotification = (
     message: string,
     type: "success" | "error" | "info" = "info"
   ) => {
-    // You can replace this with your preferred notification system
-    if (type === "success") {
-      alert(`✅ ${message}`);
-    } else if (type === "error") {
-      alert(`❌ ${message}`);
-    } else {
-      alert(`ℹ️ ${message}`);
-    }
+    // Notifications are now handled via UI state, no more alerts
+    console.log(`${type}: ${message}`);
   };
 
   // ✅ Countdown timer for resend button
@@ -70,6 +64,17 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
+
+    // ✅ Auto-trigger verification when all 6 digits are complete
+    const updatedCode = [...newCode];
+    const isComplete = updatedCode.every((digit) => digit !== "");
+    
+    if (isComplete && !isVerifying) {
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        handleVerify(updatedCode);
+      }, 100);
+    }
   };
 
   // ✅ Handle backspace
@@ -89,12 +94,19 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       setCode(newCode);
       setError("");
       inputRefs.current[5]?.focus();
+      
+      // ✅ Auto-trigger verification after paste
+      if (!isVerifying) {
+        setTimeout(() => {
+          handleVerify(newCode);
+        }, 100);
+      }
     }
   };
 
-  // ✅ Submit verification
-  const handleVerify = async () => {
-    const verificationCode = code.join("");
+  // ✅ Submit verification - now accepts optional codeArray parameter
+  const handleVerify = async (codeArray?: string[]) => {
+    const verificationCode = codeArray ? codeArray.join("") : code.join("");
 
     if (verificationCode.length !== 6) {
       setError("Please enter the 6-digit verification code");
@@ -108,15 +120,11 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       const response = await verifyEmail(email, verificationCode);
 
       if (response.status === 200) {
-        // ✅ Check if auto-login happened
-        if (response.data?.auto_logged_in) {
-          showNotification("Email verified and logged in successfully!", "success");
-          // Redirect to dashboard after auto-login
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 1000);
+        // ✅ Check if auto-login is enabled
+        if (response.data?.auto_logged_in === true && response.data?.token) {
+          // Redirect to dashboard immediately without notification
+          window.location.href = "/";
         } else {
-          showNotification("Email verified successfully!", "success");
           onVerificationSuccess();
         }
       }
@@ -125,10 +133,8 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
 
       if (error?.response?.status === 400) {
         setError("Invalid or expired verification code");
-        showNotification("Invalid verification code!", "error");
       } else {
         setError("An error occurred. Please try again.");
-        showNotification("An error occurred!", "error");
       }
 
       // Reset form
@@ -148,7 +154,6 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       const response = await resendVerificationCode(email);
 
       if (response.status === 200) {
-        showNotification("New verification code has been sent!", "success");
         setTimeLeft(60); // 60 seconds cooldown
         setCode(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
@@ -157,9 +162,9 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
       console.error("Resend error:", error);
 
       if (error?.response?.status === 400) {
-        showNotification("Email already verified!", "error");
+        setError("Email already verified");
       } else {
-        showNotification("Failed to send verification code!", "error");
+        setError("Failed to send verification code");
       }
     } finally {
       setIsResending(false);
@@ -211,18 +216,18 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-600 text-sm font-medium text-center">
-                ⚠️ {error}
+                {error}
               </p>
             </div>
           )}
 
-          {/* ✅ Verify Button */}
+          {/* ✅ Verify Button - Always disabled during auto-verification */}
           <Button
-            onClick={handleVerify}
-            disabled={!isCodeComplete || isVerifying}
-            className="w-full bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-medium"
+            onClick={() => handleVerify()}
+            disabled={isVerifying}
+            className="w-full bg-[var(--bitunix)] hover:bg-[var(--bitunix-hover)] text-black font-medium disabled:opacity-50"
           >
-            {isVerifying ? "Verifying..." : "Verify Email"}
+            {isVerifying ? "Loading..." : "Verify Email"}
           </Button>
 
           {/* ✅ Resend Button */}
