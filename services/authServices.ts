@@ -76,10 +76,10 @@ export const login = async (email: string, password: string) => {
 
     if (!response.ok) {
       // ✅ Handle email verification error
-      if (response.status === 403 && data.needs_verification) {
+      if (response.status === 401 && data.data?.email_verification_required) {
         const error = new Error(data.message);
         (error as any).needs_verification = true;
-        (error as any).email = email;
+        (error as any).email = data.data.email || email;
         throw error;
       }
       
